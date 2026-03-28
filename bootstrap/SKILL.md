@@ -29,7 +29,37 @@ Referenzen:
 
 **Lies zuerst** `references/info-gathering.md` fuer die vollstaendige Liste.
 
-Dann stelle dem Operator diese Fragen — alle auf einmal, als nummerierten Block:
+### Schritt 0.1: Stack-Frage ZUERST — alleine stellen, auf Antwort warten
+
+Stelle diese eine Frage zuerst — bevor alle anderen:
+
+```
+Was möchtest du entwickeln?
+
+a) Node.js / JavaScript Backend (API, CLI, Daemon, Trading-System)
+b) Frontend (React, Vue, Vanilla JS — laeuft im Browser)
+c) Full-Stack (Node.js Backend + Frontend)
+d) Python (KI/ML, Scripts, FastAPI, Django, Data Science)
+e) Anderes / Noch nicht klar → kurz beschreiben
+```
+
+**Warte auf Antwort.** Die Antwort bestimmt welche Tooling-Dateien Bootstrap anlegt:
+
+| Stack | Linter | Formatter | Config-Dateien |
+|-------|--------|-----------|----------------|
+| a) Node.js/JS | ESLint | — | `eslint.config.mjs`, `sonar-project.properties` |
+| b) Frontend | ESLint + Prettier | Prettier | `eslint.config.mjs`, `.prettierrc`, `sonar-project.properties` |
+| c) Full-Stack | ESLint + Prettier | Prettier | `eslint.config.mjs`, `.prettierrc`, `sonar-project.properties` |
+| d) Python | Ruff / Flake8 | Black | `pyproject.toml`, `sonar-project.properties` |
+| e) Anderes | Gemeinsam entscheiden | — | Je nach Sprache |
+
+Speichere die Antwort als `{{STACK}}` fuer Phase 1.
+
+---
+
+### Schritt 0.2: Restliche Fragen — alle auf einmal
+
+Dann stelle dem Operator diese Fragen als nummerierten Block:
 
 ```
 Ich brauche folgende Infos fuer das Setup:
@@ -100,6 +130,8 @@ Erstelle `.gitignore` (aus `references/file-templates.md` Sektion .gitignore).
 
 Aus `references/file-templates.md` mit Operator-Angaben befuellen:
 
+**Immer anlegen (stack-unabhaengig):**
+
 | Datei | Template-Sektion |
 |-------|-----------------|
 | `lib/config.js` | config.js |
@@ -112,8 +144,21 @@ Aus `references/file-templates.md` mit Operator-Angaben befuellen:
 | `INDEX.md` | INDEX.md |
 | `PROCESS_CATALOG.md` | PROCESS_CATALOG.md |
 | `specs/TEMPLATE.md` | specs-template |
-| `eslint.config.mjs` | eslint.config.mjs |
 | `sonar-project.properties` | sonar-project.properties |
+
+**Stack-abhaengige Tooling-Dateien (basierend auf {{STACK}} aus Phase 0.1):**
+
+| Stack | Anlegen |
+|-------|---------|
+| a) Node.js/JS | `eslint.config.mjs` (Template: eslint.config.mjs) |
+| b) Frontend | `eslint.config.mjs` + `.prettierrc` (Template: .prettierrc) |
+| c) Full-Stack | `eslint.config.mjs` + `.prettierrc` (Template: .prettierrc) |
+| d) Python | `pyproject.toml` (Template: pyproject.toml) — kein ESLint |
+| e) Anderes | Gemeinsam mit Operator entscheiden |
+
+Dem Operator nach Abschluss mitteilen welche Tooling-Dateien angelegt wurden und
+welche VS Code Extensions dazu passen (aus `references/file-templates.md` Sektion
+"VS Code Extensions je Stack").
 
 Ausserdem anlegen (aus eingebetteten Templates — **kein cp von externen Pfaden noetig**):
 

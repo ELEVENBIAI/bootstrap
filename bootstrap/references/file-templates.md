@@ -332,6 +332,146 @@ alle Regeln sind generisch und funktionieren fuer jedes Node.js Projekt ohne Anp
 
 ---
 
+## .prettierrc (Formatter — Frontend / Full-Stack)
+
+Nur anlegen wenn Stack = b) Frontend oder c) Full-Stack.
+Prettier formatiert automatisch beim Speichern (Format-on-Save in VS Code).
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 120,
+  "bracketSpacing": true,
+  "arrowParens": "avoid"
+}
+```
+
+**VS Code Setting ergaenzen** (in `.vscode/settings.json`):
+```json
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
+}
+```
+
+---
+
+## pyproject.toml (Python — Linter + Formatter)
+
+Nur anlegen wenn Stack = d) Python.
+Enthaelt Konfiguration fuer Black (Formatter) und Ruff (Linter, moderner Ersatz fuer Flake8).
+
+```toml
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+exclude = '''
+/(
+  \.git
+  | \.venv
+  | __pycache__
+  | node_modules
+)/
+'''
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes (unused imports, undefined names)
+  "S",   # bandit security rules
+  "B",   # bugbear (common bugs)
+]
+
+ignore = [
+  "S101",  # assert erlaubt (Tests)
+]
+
+exclude = [
+  ".git",
+  ".venv",
+  "__pycache__",
+  "node_modules",
+]
+
+[tool.ruff.per-file-ignores]
+"tests/**" = ["S"]  # Security-Regeln in Tests lockerer
+```
+
+**VS Code Extensions fuer Python:**
+- `ms-python.python` — Python Extension (Pflicht)
+- `ms-python.black-formatter` — Black Formatter
+- `charliermarsh.ruff` — Ruff Linter
+
+**VS Code Setting ergaenzen** (in `.vscode/settings.json`):
+```json
+{
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": true
+    }
+  }
+}
+```
+
+---
+
+## VS Code Extensions je Stack
+
+Beim Abschluss von Phase 1 dem Operator diese Extensions empfehlen:
+
+### Stack a) Node.js/JS
+```
+Pflicht:  ESLint (dbaeumer.vscode-eslint)
+          Error Lens (usernamehw.errorlens)
+          SonarLint (sonarsource.sonarlint-vscode)
+Optional: REST Client (humao.rest-client) — fuer API-Tests
+```
+
+### Stack b) Frontend
+```
+Pflicht:  ESLint (dbaeumer.vscode-eslint)
+          Prettier (esbenp.prettier-vscode)
+          Error Lens (usernamehw.errorlens)
+          SonarLint (sonarsource.sonarlint-vscode)
+Optional: Auto Rename Tag (formulahendry.auto-rename-tag)
+          CSS Peek (pranaygp.vscode-css-peek)
+```
+
+### Stack c) Full-Stack
+```
+Pflicht:  ESLint (dbaeumer.vscode-eslint)
+          Prettier (esbenp.prettier-vscode)
+          Error Lens (usernamehw.errorlens)
+          SonarLint (sonarsource.sonarlint-vscode)
+```
+
+### Stack d) Python
+```
+Pflicht:  Python (ms-python.python)
+          Black Formatter (ms-python.black-formatter)
+          Ruff (charliermarsh.ruff)
+          Error Lens (usernamehw.errorlens)
+          SonarLint (sonarsource.sonarlint-vscode)
+Optional: Pylance (ms-python.vscode-pylance) — bessere Autovervollstaendigung
+          Jupyter (ms-toolsai.jupyter) — falls Data Science
+```
+
+---
+
 ## sonar-project.properties (SonarLint Konfiguration)
 
 Konfiguriert SonarQube for IDE (SonarLint Plugin in VS Code) fuer das Projekt.
