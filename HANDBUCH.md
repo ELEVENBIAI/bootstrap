@@ -246,9 +246,36 @@ Claude führt dich jetzt durch 14 Fragen (ca. 5 Minuten) und baut danach alles a
 
 ### Phase 0: Fragen & Antworten (du + Claude)
 
-Claude stellt 14 Fragen. Die wichtigsten:
+Bootstrap stellt die Fragen in zwei Schritten.
 
-**Pflicht-Fragen:**
+#### Schritt 1: Stack-Frage — als allererstes
+
+Bevor alles andere fragt Bootstrap:
+
+```
+Was möchtest du entwickeln?
+
+a) Node.js / JavaScript Backend (API, CLI, Daemon)
+b) Frontend (React, Vue, Vanilla JS)
+c) Full-Stack (Node.js Backend + Frontend)
+d) Python (KI/ML, Scripts, FastAPI, Django)
+e) Anderes / Noch nicht klar
+```
+
+**Warum zuerst?** Die Antwort bestimmt welche Werkzeuge Bootstrap für dich einrichtet:
+
+| Deine Wahl | Linter | Formatter | Wird automatisch angelegt |
+|-----------|--------|-----------|--------------------------|
+| Node.js | ESLint | — | `eslint.config.mjs` |
+| Frontend | ESLint + Prettier | Prettier | `eslint.config.mjs` + `.prettierrc` |
+| Full-Stack | ESLint + Prettier | Prettier | `eslint.config.mjs` + `.prettierrc` |
+| Python | Ruff | Black | `pyproject.toml` |
+
+Am Ende sagt Bootstrap dir auch welche VS Code Extensions du für deinen Stack brauchst.
+
+#### Schritt 2: Restliche Fragen (14 Stück)
+
+Danach kommen alle weiteren Infos auf einmal:
 
 | Frage | Beispiel-Antwort | Warum wichtig |
 |-------|-----------------|---------------|
@@ -274,29 +301,34 @@ d) Manuell auswählen
 
 ### Phase 1: Grundstruktur (automatisch, ~2 Minuten)
 
-Claude erstellt alle Dateien:
+Claude erstellt alle Dateien — die Tooling-Dateien passen sich automatisch deinem Stack an:
 
 ```
 dein-projekt/
 ├── lib/
-│   └── config.js          ← Zentrale Konfiguration (SSoT)
+│   └── config.js           ← Zentrale Konfiguration (SSoT)
 ├── agents/
-│   └── self-healing.js    ← Überwacht dein System
-├── journal/               ← Alle Logs
+│   └── self-healing.js     ← Überwacht dein System
+├── journal/                ← Alle Logs
 ├── specs/
-│   └── TEMPLATE.md        ← Vorlage für neue Features
-├── docs/                  ← Technische Dokumentation
+│   └── TEMPLATE.md         ← Vorlage für neue Features
+├── docs/                   ← Technische Dokumentation
 ├── .claude/
-│   ├── skills/            ← Deine installierten Skills
-│   └── hooks/             ← Git-Governance-Regeln
-├── CLAUDE.md              ← "Wer bin ich?" für die KI
+│   ├── skills/             ← Deine installierten Skills
+│   └── hooks/              ← Git-Governance-Regeln
+├── CLAUDE.md               ← "Wer bin ich?" für die KI
 ├── SYSTEM_ARCHITECTURE.md
 ├── API_INVENTORY.md
 ├── INDEX.md
 ├── CHANGELOG.md
 ├── GOVERNANCE.md
 ├── SECURITY.md
-└── .env.example           ← API Key Template
+├── .env.example            ← API Key Template
+│
+│   ── Stack-abhängig (automatisch) ──
+├── eslint.config.mjs       ← Node.js / Frontend / Full-Stack
+├── .prettierrc             ← nur Frontend / Full-Stack
+└── pyproject.toml          ← nur Python (Black + Ruff)
 ```
 
 **Die wichtigste Datei: `CLAUDE.md`**
@@ -635,34 +667,61 @@ Die offizielle Claude Code Extension für VS Code integriert alles direkt in dei
 VS Code → Extensions → "Claude Code" suchen → Install
 ```
 
-### Die 3 Governance-Plugins
+### Die Basis-Plugins (immer, für jeden Stack)
 
-Diese 3 Plugins bilden zusammen eine **automatische Code-Qualitäts-Schicht** die dich
-beim Schreiben schlechten Codes bremst — bevor es zu einem Problem wird.
+Diese 3 Plugins installierst du **einmal** — sie funktionieren für alle Projekte:
 
-**1. ESLint** — Coding-Regeln in Echtzeit
+**1. ESLint** (`dbaeumer.vscode-eslint`) — Coding-Regeln in Echtzeit
 
-- Prüft deinen Code automatisch gegen die Regeln in `.eslintrc.js`
+- Prüft deinen Code automatisch gegen die Regeln in `eslint.config.mjs`
 - Zeigt Fehler und Warnungen direkt im Editor (rote/gelbe Unterkringelung)
 - Schützt gegen echte Fehlerquellen: unbenutzte Variablen, fehlendes `===`, Security-Lücken
 - **Verbindung zur Governance:** Der `/implement` Skill ruft ESLint nach jeder Änderung
-  automatisch auf (`npx eslint --max-warnings=0`) — Fehler blockieren den Commit
+  automatisch auf — Fehler blockieren den Commit
 
-**2. SonarQube for IDE** (SonarLint) — Tiefenanalyse
+**2. SonarQube for IDE** (`sonarsource.sonarlint-vscode`) — Tiefenanalyse
 
 - Analysiert tiefergehende Muster: Code Smells, potenzielle Bugs, Security Vulnerabilities
 - Arbeitet passiv im Hintergrund — kein manuelles Starten
-- Kategorisiert Findings nach Schweregrad (Bug / Vulnerability / Code Smell)
-- Liest optional `sonar-project.properties` für projektspezifische Regeln
-- **Verbindung zur Governance:** Findet was ESLint nicht findet — z.B. SQL Injection Muster,
-  hardcoded Credentials, unsichere Crypto-Nutzung
+- Findet was ESLint nicht findet — z.B. SQL Injection, hardcoded Credentials, unsichere Crypto-Nutzung
 
-**3. Error Lens** — Kein Verstecken mehr
+**3. Error Lens** (`usernamehw.errorlens`) — Kein Verstecken mehr
 
 - Zeigt ESLint- und SonarLint-Findings **direkt in der Zeile** — nicht erst beim Hover
 - Rote Zeile = Fehler. Gelbe Zeile = Warnung. Sofort sichtbar, nicht ignorierbar.
-- **Verbindung zur Governance:** Macht das Qualitäts-Feedback unmittelbar — du siehst
-  Probleme während du tippst, nicht erst wenn `/implement` den Gate ausführt
+
+### Stack-spezifische Plugins
+
+Abhängig davon was du entwickelst, kommen diese dazu:
+
+**Node.js / JavaScript Backend:**
+```
+Optional: REST Client (humao.rest-client) — API-Endpunkte direkt aus VS Code testen
+```
+
+**Frontend (React, Vue, Vanilla JS):**
+```
+Pflicht:  Prettier (esbenp.prettier-vscode) — Format-on-Save für JS/HTML/CSS
+Optional: Auto Rename Tag (formulahendry.auto-rename-tag)
+          CSS Peek (pranaygp.vscode-css-peek)
+```
+
+**Full-Stack:**
+```
+Pflicht:  Prettier (esbenp.prettier-vscode)
+```
+
+**Python:**
+```
+Pflicht:  Python (ms-python.python)
+          Black Formatter (ms-python.black-formatter) — Formatter für Python
+          Ruff (charliermarsh.ruff) — Linter (moderner Ersatz für Flake8)
+Optional: Pylance (ms-python.vscode-pylance) — bessere Autovervollständigung
+          Jupyter (ms-toolsai.jupyter) — falls Data Science / ML
+```
+
+> **Tipp:** Bootstrap sagt dir am Ende des Setups automatisch welche Extensions
+> du für deinen Stack installieren sollst. Du musst dir das nicht merken.
 
 **Das Zusammenspiel:**
 ```
