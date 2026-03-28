@@ -676,14 +676,47 @@ Du tippst Code
   → Errors vorhanden = Gate blockiert → erst fixen
 ```
 
-**Die Regeldatei: `.eslintrc.js`**
+**Die Regeldatei: `eslint.config.mjs`**
 
-Der Bootstrap legt diese Datei automatisch an. Sie enthält:
+Der Bootstrap legt diese Datei **automatisch im Projekt-Root an** — du musst nichts manuell tun.
+Das VS Code ESLint Plugin erkennt sie beim Öffnen des Projekts sofort und aktiviert alle Regeln.
+
+Sie enthält:
+- Fehler-Prävention: `no-undef`, `no-unreachable`, `use-isnan`
 - Security-Regeln: `no-eval`, `no-implied-eval`, `no-new-func`
 - Qualitäts-Regeln: `eqeqeq`, `no-unused-vars`, `prefer-const`
-- Style-Regeln: `semi`, `quotes`, `no-trailing-spaces`
+- Async-Regeln: `no-async-promise-executor`, `no-await-in-loop`
+- Lesbarkeit: `max-len` (120 Zeichen), `max-depth` (5 Ebenen)
 
-Anpassen: Öffne `.eslintrc.js` und füge/entferne Regeln nach Bedarf.
+Anpassen: Öffne `eslint.config.mjs` im Projekt-Root und füge/entferne Regeln nach Bedarf.
+
+### ESLint bei einem neuen Projekt
+
+**Szenario:** Du startest ein neues Projekt in Claude Code — die `eslint.config.mjs` fehlt noch.
+
+**Mit Bootstrap (empfohlen):**
+```
+/bootstrap
+```
+Bootstrap erstellt die `eslint.config.mjs` automatisch in Phase 1 — du musst nichts weiter tun.
+Danach erkennt das VS Code ESLint Plugin sie sofort.
+
+**Ohne Bootstrap (manuell):**
+1. Kopiere die `eslint.config.mjs` aus einem bestehenden Projekt in den Root des neuen Projekts
+2. Alle Regeln sind generisch — keine Anpassung nötig für Node.js Projekte
+3. VS Code ESLint Plugin aktiviert sich automatisch beim nächsten Öffnen der Datei
+
+**Wo liegt die Datei?**
+```
+mein-projekt/           ← Projekt-Root (wo du claude startest)
+├── eslint.config.mjs   ← HIER — direkt im Root, nicht in einem Unterordner
+├── lib/
+├── agents/
+└── ...
+```
+
+> **Wichtig:** ESLint v9+ verwendet das neue Format (`eslint.config.mjs`). Das alte Format
+> (`.eslintrc.js`) ist veraltet. Bootstrap erstellt immer das neue Format.
 
 ### Empfohlene VS Code Settings für Governance
 

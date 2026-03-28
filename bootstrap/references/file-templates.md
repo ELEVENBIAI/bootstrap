@@ -222,62 +222,99 @@ CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 
 ---
 
-## .eslintrc.js (Code Quality Gate)
+## eslint.config.mjs (Code Quality Gate)
 
-Die Haupt-Regeldatei fuer ESLint. Wird vom `/implement` Skill als Quality Gate in
-Schritt 6a automatisch ausgefuehrt. SonarLint liest diese Regeln ebenfalls.
+Die Haupt-Regeldatei fuer ESLint. Liegt im **Projekt-Root** und wird vom VS Code ESLint Plugin
+automatisch erkannt. Wird vom `/implement` Skill als Quality Gate in Schritt 6a ausgefuehrt.
+SonarLint liest diese Regeln ebenfalls.
+
+**Wichtig:** ESLint v9+ verwendet das neue "Flat Config" Format (`eslint.config.mjs`).
+Das alte Format (`.eslintrc.js`) ist veraltet und wird nicht mehr unterstuetzt.
 
 ```javascript
-// .eslintrc.js
-// Wird von /implement Schritt 6a ausgefuehrt: npx eslint --max-warnings=0
-// SonarQube for IDE (SonarLint) und Error Lens zeigen Findings inline in VS Code
-'use strict';
+// eslint.config.mjs — ESLint v9 Flat Config
+// Liegt im Projekt-Root — VS Code ESLint Plugin erkennt diese Datei automatisch.
+// Wird von /implement Schritt 6a ausgefuehrt: npx eslint <geaenderte-dateien>
+// SonarQube for IDE (SonarLint) und Error Lens zeigen Findings inline in VS Code.
 
-module.exports = {
-  env: {
-    node: true,
-    es2022: true,
+export default [
+  {
+    // Globale ignores — als eigenes Top-Level-Objekt ohne "files"-Key
+    ignores: [
+      "node_modules/**",
+      "data/**",
+      "signals/**",
+      "journal/**",
+      "*.log"
+    ]
   },
-  extends: ['eslint:recommended'],
-  parserOptions: {
-    ecmaVersion: 2022,
-    sourceType: 'module',
-  },
-  rules: {
+  {
+    files: ["**/*.js"],
 
-    // === FEHLER-PRAEVENTION ===
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-    'no-undef': 'error',
-    'no-unreachable': 'error',
-    'no-duplicate-case': 'error',
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "commonjs",
+      globals: {
+        // Node.js Globals
+        require: "readonly",
+        module: "writable",
+        exports: "writable",
+        __dirname: "readonly",
+        __filename: "readonly",
+        process: "readonly",
+        console: "readonly",
+        Buffer: "readonly",
+        setTimeout: "readonly",
+        setInterval: "readonly",
+        clearTimeout: "readonly",
+        clearInterval: "readonly",
+        Promise: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly"
+      }
+    },
 
-    // === SICHERHEIT (Security by Design) ===
-    'no-eval': 'error',            // Kein eval() — Remote Code Execution Risiko
-    'no-implied-eval': 'error',    // Kein setTimeout('string') — gleiches Risiko
-    'no-new-func': 'error',        // Kein new Function() — gleiches Risiko
-    'no-script-url': 'error',      // Kein javascript: in URLs
+    rules: {
 
-    // === CODE-QUALITAET ===
-    'eqeqeq': ['error', 'always'], // Immer === statt ==
-    'no-var': 'error',             // Kein var — nur let/const
-    'prefer-const': 'error',       // const wo moeglich
-    'no-console': 'warn',          // console.log bewusst einsetzen
+      // === FEHLER-PRAEVENTION ===
+      "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "no-undef": "error",
+      "no-unreachable": "error",
+      "no-duplicate-case": "error",
+      "no-dupe-keys": "error",
+      "no-self-assign": "error",
+      "no-constant-condition": "warn",
+      "use-isnan": "error",
 
-    // === GOVERNANCE ===
-    'semi': ['error', 'always'],   // Semikolon Pflicht
-    'quotes': ['warn', 'single', { avoidEscape: true }],
-    'no-trailing-spaces': 'warn',
-    'eol-last': ['warn', 'always'],
+      // === REDUNDANZ + CODE-QUALITAET ===
+      "no-redeclare": "error",
+      "no-shadow": "warn",
+      "no-var": "error",
+      "prefer-const": "warn",
+      "no-else-return": "warn",
+      "no-useless-return": "warn",
 
-  },
-  ignorePatterns: [
-    'node_modules/',
-    'journal/',
-    'data/',
-    'signals/',
-    '*.min.js',
-  ],
-};
+      // === ASYNC / PROMISES (kritisch fuer alle Event-Loop Systeme) ===
+      "no-async-promise-executor": "error",
+      "no-await-in-loop": "warn",
+      "no-promise-executor-return": "error",
+      "require-await": "warn",
+
+      // === SICHERHEIT (Security by Design) ===
+      "no-eval": "error",           // Kein eval() — Remote Code Execution Risiko
+      "no-new-func": "error",       // Kein new Function() — gleiches Risiko
+      "no-implied-eval": "error",   // Kein setTimeout('string') — gleiches Risiko
+
+      // === STIL / LESBARKEIT ===
+      "eqeqeq": ["error", "always"],
+      "no-console": "off",
+      "no-trailing-spaces": "warn",
+      "no-multiple-empty-lines": ["warn", { "max": 2 }],
+      "max-len": ["warn", { "code": 120, "ignoreComments": true, "ignoreStrings": true }],
+      "max-depth": ["warn", { "max": 5 }]
+    }
+  }
+];
 ```
 
 **Warum diese Regeln?**
@@ -288,6 +325,10 @@ module.exports = {
 | `eqeqeq` | Verhindert subtile Typ-Vergleichsfehler |
 | `no-unused-vars` | Verhindert toten Code der versteckte Bugs kaschiert |
 | `prefer-const` | Verhindert unbeabsichtigte Variable-Mutation |
+| `no-async-promise-executor` | Verhindert versteckte Fehler in async Promise-Chains |
+
+**Neues Projekt ohne Bootstrap?** Datei einfach aus einem bestehenden Projekt kopieren —
+alle Regeln sind generisch und funktionieren fuer jedes Node.js Projekt ohne Anpassung.
 
 ---
 

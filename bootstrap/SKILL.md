@@ -112,7 +112,7 @@ Aus `references/file-templates.md` mit Operator-Angaben befuellen:
 | `INDEX.md` | INDEX.md |
 | `PROCESS_CATALOG.md` | PROCESS_CATALOG.md |
 | `specs/TEMPLATE.md` | specs-template |
-| `.eslintrc.js` | .eslintrc.js |
+| `eslint.config.mjs` | eslint.config.mjs |
 | `sonar-project.properties` | sonar-project.properties |
 
 Ausserdem anlegen (aus eingebetteten Templates — **kein cp von externen Pfaden noetig**):
