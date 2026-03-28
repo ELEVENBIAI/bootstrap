@@ -671,22 +671,21 @@ VS Code → Extensions → "Claude Code" suchen → Install
 
 Diese 3 Plugins installierst du **einmal** — sie funktionieren für alle Projekte:
 
-**1. ESLint** (`dbaeumer.vscode-eslint`) — Coding-Regeln in Echtzeit
-
+**1. ESLint** — Coding-Regeln in Echtzeit
+→ https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
 - Prüft deinen Code automatisch gegen die Regeln in `eslint.config.mjs`
 - Zeigt Fehler und Warnungen direkt im Editor (rote/gelbe Unterkringelung)
-- Schützt gegen echte Fehlerquellen: unbenutzte Variablen, fehlendes `===`, Security-Lücken
 - **Verbindung zur Governance:** Der `/implement` Skill ruft ESLint nach jeder Änderung
   automatisch auf — Fehler blockieren den Commit
 
-**2. SonarQube for IDE** (`sonarsource.sonarlint-vscode`) — Tiefenanalyse
-
+**2. SonarQube for IDE (SonarLint)** — Tiefenanalyse
+→ https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode
 - Analysiert tiefergehende Muster: Code Smells, potenzielle Bugs, Security Vulnerabilities
 - Arbeitet passiv im Hintergrund — kein manuelles Starten
-- Findet was ESLint nicht findet — z.B. SQL Injection, hardcoded Credentials, unsichere Crypto-Nutzung
+- Findet was ESLint nicht findet — SQL Injection, hardcoded Credentials, unsichere Crypto-Nutzung
 
-**3. Error Lens** (`usernamehw.errorlens`) — Kein Verstecken mehr
-
+**3. Error Lens** — Kein Verstecken mehr
+→ https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens
 - Zeigt ESLint- und SonarLint-Findings **direkt in der Zeile** — nicht erst beim Hover
 - Rote Zeile = Fehler. Gelbe Zeile = Warnung. Sofort sichtbar, nicht ignorierbar.
 
@@ -695,33 +694,51 @@ Diese 3 Plugins installierst du **einmal** — sie funktionieren für alle Proje
 Abhängig davon was du entwickelst, kommen diese dazu:
 
 **Node.js / JavaScript Backend:**
-```
-Optional: REST Client (humao.rest-client) — API-Endpunkte direkt aus VS Code testen
-```
+
+→ REST Client (API-Endpunkte direkt aus VS Code testen)
+  https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
 **Frontend (React, Vue, Vanilla JS):**
-```
-Pflicht:  Prettier (esbenp.prettier-vscode) — Format-on-Save für JS/HTML/CSS
-Optional: Auto Rename Tag (formulahendry.auto-rename-tag)
-          CSS Peek (pranaygp.vscode-css-peek)
-```
+
+→ Prettier — automatisches Formatieren beim Speichern
+  https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
+→ Auto Rename Tag — HTML-Tags automatisch umbenennen
+  https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
+
+→ CSS Peek — CSS-Klassen direkt aus HTML anspringen
+  https://marketplace.visualstudio.com/items?itemName=pranaygp.vscode-css-peek
 
 **Full-Stack:**
-```
-Pflicht:  Prettier (esbenp.prettier-vscode)
-```
+
+→ Prettier — automatisches Formatieren beim Speichern
+  https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
 
 **Python:**
-```
-Pflicht:  Python (ms-python.python)
-          Black Formatter (ms-python.black-formatter) — Formatter für Python
-          Ruff (charliermarsh.ruff) — Linter (moderner Ersatz für Flake8)
-Optional: Pylance (ms-python.vscode-pylance) — bessere Autovervollständigung
-          Jupyter (ms-toolsai.jupyter) — falls Data Science / ML
-```
 
-> **Tipp:** Bootstrap sagt dir am Ende des Setups automatisch welche Extensions
-> du für deinen Stack installieren sollst. Du musst dir das nicht merken.
+→ Python (Pflicht — Grundlage für alles)
+  https://marketplace.visualstudio.com/items?itemName=ms-python.python
+
+→ Black Formatter — automatisches Formatieren
+  https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
+
+→ Ruff — Linter (moderner Ersatz für Flake8)
+  https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff
+
+→ Error Lens
+  https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens
+
+→ SonarLint
+  https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode
+
+→ Pylance — bessere Autovervollständigung (optional)
+  https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance
+
+→ Jupyter — für Data Science / ML Notebooks (optional)
+  https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
+
+> **Tipp:** Bootstrap gibt dir am Ende des Setups automatisch die passenden Links
+> für deinen Stack aus — einfach klicken und installieren. Kein Suchen nötig.
 
 **Das Zusammenspiel:**
 ```

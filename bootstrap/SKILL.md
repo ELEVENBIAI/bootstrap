@@ -445,18 +445,26 @@ git commit -m "v{VERSION_START} — Complete Governance Bootstrap"
 git push
 ```
 
-### 5.5 Abschluss-Tabelle ausgeben
+### 5.5 Abschluss-Ausgabe
+
+**Schritt 1:** Abschluss-Tabelle ausgeben:
 
 | Phase | Was | Status |
 |-------|-----|--------|
-| Phase 0 | Info-Gathering | done |
+| Phase 0 | Info-Gathering + Stack-Wahl | done |
 | Phase 1 | Grundstruktur (Dateien, Git, Linear-Labels) | done |
 | Phase 2 | Skills installiert + angepasst | done |
 | Phase 3 | Self-Healing + Doc-Sync (aus eingebetteten Templates) | done |
 | Phase 4 | Automation Daemon | done / skipped |
 | Phase 5 | Global Registry aktualisiert | done |
 
-Naechste Schritte:
+**Schritt 2:** VS Code Extensions ausgeben — passend zum gewaelten Stack.
+Lies die Ausgabe-Texte aus `references/file-templates.md` Sektion "VS Code Extensions je Stack":
+- Basis-Extensions IMMER ausgeben (alle Stacks ausser Python)
+- Stack-spezifische Extensions zusaetzlich ausgeben
+- Bei Python: eigene Liste (ersetzt Basis)
+
+**Schritt 3:** Naechste Schritte ausgeben:
 1. `cd {PROJECT_PATH} && claude` — erstes Projekt-Gespraech starten
 2. `/ideation` — erste Story erstellen
 3. CLAUDE.md um projektspezifische Architektur ergaenzen wenn System waechst

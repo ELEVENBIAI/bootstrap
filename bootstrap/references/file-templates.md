@@ -431,43 +431,83 @@ exclude = [
 
 ## VS Code Extensions je Stack
 
-Beim Abschluss von Phase 1 dem Operator diese Extensions empfehlen:
+Am Ende von Phase 5 (Abschluss) dem Operator die passenden Links ausgeben.
+Einfach anklicken → direkt im Browser installieren.
 
-### Stack a) Node.js/JS
-```
-Pflicht:  ESLint (dbaeumer.vscode-eslint)
-          Error Lens (usernamehw.errorlens)
-          SonarLint (sonarsource.sonarlint-vscode)
-Optional: REST Client (humao.rest-client) — fuer API-Tests
-```
+### Basis-Extensions (IMMER ausgeben — fuer alle Stacks)
 
-### Stack b) Frontend
 ```
-Pflicht:  ESLint (dbaeumer.vscode-eslint)
-          Prettier (esbenp.prettier-vscode)
-          Error Lens (usernamehw.errorlens)
-          SonarLint (sonarsource.sonarlint-vscode)
-Optional: Auto Rename Tag (formulahendry.auto-rename-tag)
-          CSS Peek (pranaygp.vscode-css-peek)
+✓ Basis-Extensions (fuer alle Projekte):
+
+→ ESLint
+  https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+
+→ Error Lens (zeigt Fehler direkt in der Codezeile)
+  https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens
+
+→ SonarLint (tiefergehende Code-Analyse)
+  https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode
 ```
 
-### Stack c) Full-Stack
+### Stack a) Node.js/JS — zusaetzlich ausgeben
+
 ```
-Pflicht:  ESLint (dbaeumer.vscode-eslint)
-          Prettier (esbenp.prettier-vscode)
-          Error Lens (usernamehw.errorlens)
-          SonarLint (sonarsource.sonarlint-vscode)
+✓ Stack-spezifisch (Node.js):
+
+→ REST Client (API-Endpunkte direkt aus VS Code testen)
+  https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 ```
 
-### Stack d) Python
+### Stack b) Frontend — zusaetzlich ausgeben
+
 ```
-Pflicht:  Python (ms-python.python)
-          Black Formatter (ms-python.black-formatter)
-          Ruff (charliermarsh.ruff)
-          Error Lens (usernamehw.errorlens)
-          SonarLint (sonarsource.sonarlint-vscode)
-Optional: Pylance (ms-python.vscode-pylance) — bessere Autovervollstaendigung
-          Jupyter (ms-toolsai.jupyter) — falls Data Science
+✓ Stack-spezifisch (Frontend):
+
+→ Prettier (automatisches Formatieren beim Speichern)
+  https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
+→ Auto Rename Tag (HTML-Tags automatisch umbenennen)
+  https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
+
+→ CSS Peek (CSS-Klassen direkt aus HTML anspringen)
+  https://marketplace.visualstudio.com/items?itemName=pranaygp.vscode-css-peek
+```
+
+### Stack c) Full-Stack — zusaetzlich ausgeben
+
+```
+✓ Stack-spezifisch (Full-Stack):
+
+→ Prettier (automatisches Formatieren beim Speichern)
+  https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+```
+
+### Stack d) Python — STATT Basis-Extensions ausgeben
+
+```
+✓ Extensions fuer Python:
+
+→ Python (Pflicht — Grundlage fuer alles)
+  https://marketplace.visualstudio.com/items?itemName=ms-python.python
+
+→ Black Formatter (automatisches Formatieren)
+  https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
+
+→ Ruff (Linter — schneller Ersatz fuer Flake8)
+  https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff
+
+→ Error Lens (zeigt Fehler direkt in der Codezeile)
+  https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens
+
+→ SonarLint (tiefergehende Code-Analyse)
+  https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode
+
+Optional:
+→ Pylance (bessere Autovervollstaendigung)
+  https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance
+
+→ Jupyter (fuer Data Science / ML Notebooks)
+  https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
 ```
 
 ---
