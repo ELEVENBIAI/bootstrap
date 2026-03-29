@@ -19,7 +19,7 @@
 8. [VS Code Setup](#8-vs-code-setup)
 9. [Governance für dein Projekt anpassen](#9-governance-für-dein-projekt-anpassen)
 10. [Tägliche Nutzung — ein typischer Workflow](#10-tägliche-nutzung--ein-typischer-workflow)
-11. [Häufige Fragen](#11-häufige-fragen)
+11. [Häufige Fragen](#11-häufige-fragen) — inkl. Claude Agent SDK Migration
 
 ---
 
@@ -93,7 +93,7 @@ GitHub Repository (vibercoder79/KI-Masterclass-Koerting-)
 
 | Software | Wozu | Download |
 |----------|------|---------|
-| **Claude Code CLI** | Das Herzstück — KI im Terminal | `npm install -g @anthropic-ai/claude-code` |
+| **Claude Code CLI** | Das Herzstück — KI im Terminal | `npm install -g @anthropic-ai/claude-code` ¹ |
 | **Node.js** (v18+) | Runtime für Claude Code | nodejs.org |
 | **Git** | Versionskontrolle | git-scm.com |
 
@@ -145,6 +145,10 @@ Bevor du mit `/bootstrap` startest, halte diese Keys bereit:
 
 > **Sicherheitsregel:** API Keys kommen NIEMALS in den Code. Sie landen in `.env` (diese Datei ist
 > in `.gitignore` — wird nicht auf GitHub hochgeladen).
+
+> ¹ **Hinweis zum Claude-Paket:** Das CLI-Tool heißt weiterhin `@anthropic-ai/claude-code`.
+> Das neue `@anthropic-ai/claude-agent-sdk` (npm) / `claude-agent-sdk` (pip) ist für
+> programmatische SDK-Nutzung in eigenen Apps — nicht für das CLI. Details: [FAQ → Claude Agent SDK](#was-ist-das-claude-agent-sdk--muss-ich-migrieren)
 
 ### SSH für GitHub einrichten
 
@@ -1076,6 +1080,51 @@ Alle Guardrails haben einen `--no-verify` Bypass. Du kannst sie umgehen — aber
 Das Ziel ist nicht Kontrolle sondern **bewusstes Handeln**. Wenn du weißt "ich umgehe
 gerade die Regel weil X" ist das gut. Wenn du aus Versehen Regeln brichst ohne es zu
 merken — das ist das Problem das Governance verhindert.
+
+### "Was ist das Claude Agent SDK — muss ich migrieren?"
+
+Das **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) ist das umbenannte Nachfolger-Paket
+von `@anthropic-ai/claude-code` (npm) bzw. `claude-code-sdk` (pip). Es ist ein Rebranding mit
+einigen Breaking Changes in v0.1.0.
+
+**Wichtig: Für wen ist die Migration relevant?**
+
+| Anwendungsfall | Migration nötig? |
+|----------------|-----------------|
+| Claude Code als **CLI-Tool** nutzen (`claude` im Terminal, Skills, Hooks) | **Nein** — nichts zu tun |
+| Claude Code als **Bibliothek** in eigenem Code importieren (`import { query } from "@anthropic-ai/claude-code"`) | **Ja** — Paket und Imports umbenennen |
+
+**Das OpenCLAW Framework und dieses Handbuch nutzen Claude Code ausschließlich als CLI-Tool.**
+Wenn du `/bootstrap`, `/implement` oder andere Skills verwendest, bist du **nicht betroffen**.
+
+Nur wenn du eigene Apps baust, die `@anthropic-ai/claude-code` oder `claude-code-sdk`
+programmatisch importieren, musst du migrieren:
+
+```bash
+# npm
+npm uninstall @anthropic-ai/claude-code
+npm install @anthropic-ai/claude-agent-sdk
+
+# pip
+pip uninstall claude-code-sdk
+pip install claude-agent-sdk
+```
+
+```typescript
+// Vorher
+import { query } from "@anthropic-ai/claude-code";
+// Nachher
+import { query } from "@anthropic-ai/claude-agent-sdk";
+```
+
+Drei Breaking Changes in v0.1.0:
+- **System-Prompt** wird nicht mehr automatisch mitgeladen (explizit setzen wenn gewünscht)
+- **Settings-Quellen** (`~/.claude/settings.json`, `CLAUDE.md`) werden nicht mehr automatisch gelesen
+- **Python:** `ClaudeCodeOptions` heißt jetzt `ClaudeAgentOptions`
+
+Migrations-Guide: https://platform.claude.com/docs/en/agent-sdk/migration-guide
+
+---
 
 ### "Wie aktualisiere ich die Skills wenn neue Versionen kommen?"
 
