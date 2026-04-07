@@ -25,6 +25,7 @@ Referenzen:
 - `references/breakfix-template.md` — Skeleton fuer /breakfix (generiert, nicht kopiert)
 - `references/integration-test-template.md` — Skeleton fuer /integration-test (generiert)
 - `references/status-template.md` — Skeleton fuer /status (generiert)
+- `references/wrap-up-template.md` — Generischer /wrap-up Skill (Session-Abschluss + Memory)
 
 ---
 
@@ -95,13 +96,14 @@ OPTIONAL (leer lassen wenn nicht gewuenscht):
 
 SKILLS:
 13. Welche Skills installieren?
-    a) Minimum (ideation, implement, backlog) — empfohlen fuer Start
+    a) Minimum (ideation, implement, backlog, wrap-up) — empfohlen fuer Start
     b) Standard (+ architecture-review, sprint-review, research, breakfix*)
-    c) Voll (alle: + cloud-system-engineer, visualize, skill-creator, integration-test*, status*)
+    c) Voll (alle: + cloud-system-engineer, excalidraw-diagram, visualize, skill-creator, integration-test*, status*)
     d) Manuell auswaehlen
-    e) Optional-Stack angeben (grafana, supabase, vercel)
+    e) Optional-Stack angeben (notebooklm, grafana, supabase, vercel)
 
     * = wird vom Bootstrap individuell generiert (Fragen werden gestellt)
+    wrap-up = immer empfohlen — Session-Abschluss + Auto-Memory
 
 DOMAIN:
 14. Welche Architektur-Dimensionen sind relevant?
@@ -333,8 +335,8 @@ cd /tmp
 git clone --filter=blob:none --sparse "$REPO" ki-masterclass-skills 2>/dev/null
 cd ki-masterclass-skills
 
-# Gewaehlte Skills holen (Minimum: ideation implement backlog)
-git sparse-checkout set ideation implement backlog architecture-review sprint-review research skill-creator visualize
+# Gewaehlte Skills holen (Minimum: ideation implement backlog wrap-up)
+git sparse-checkout set ideation implement backlog wrap-up architecture-review sprint-review research excalidraw-diagram skill-creator visualize notebooklm
 
 # Nach /root/.claude/skills/ kopieren
 cp -r ideation implement backlog architecture-review sprint-review research skill-creator visualize "$SKILLS_DIR/"
@@ -350,10 +352,15 @@ for SKILL in {gewaehlte-skills}; do
 done
 ```
 
-Minimum (a): ideation, implement, backlog
+Minimum (a): ideation, implement, backlog, wrap-up
 Standard (b): + architecture-review, sprint-review, research, breakfix
-Voll (c): + cloud-system-engineer, visualize, skill-creator, integration-test, status
-Optional: grafana (wenn Prometheus/Grafana Stack), supabase (wenn Supabase DB), vercel (wenn Vercel Deployment)
+Voll (c): + cloud-system-engineer, excalidraw-diagram, visualize, skill-creator, integration-test, status
+Optional: notebooklm, grafana (wenn Grafana Stack), supabase (wenn Supabase DB), vercel (wenn Vercel Deployment)
+
+**wrap-up** ist in allen Paketen enthalten — es gehört immer dazu:
+Lies `references/wrap-up-template.md` und verlinke/kopiere den Skill.
+Wenn wrap-up kopiert wurde: `{{MEMORY_PATH}}` mit dem tatsächlichen Memory-Pfad befüllen.
+(Standard: `{project-slug}` — abgeleitet aus PROJECT_PATH)
 
 Danach domain-spezifische Anpassung (wenn Skills kopiert wurden):
 - `ideation/references/story-template-feature.md` — Domain-Sektionen anpassen
@@ -390,6 +397,20 @@ Wenn Post-Implement = Ja: Ergänze am Ende von `{PROJECT_PATH}/.claude/skills/im
 Lies `references/status-template.md` Sektion "Bootstrap: Fragen an den Operator".
 Stelle die 4 Fragen. Warte auf Antworten.
 Dann: generiere `{PROJECT_PATH}/.claude/skills/status/SKILL.md`.
+
+#### /wrap-up (in allen Paketen)
+
+Lies `references/wrap-up-template.md`.
+Der Skill braucht keine Fragen — einfach verlinken oder kopieren.
+Wenn kopiert: `{{MEMORY_PATH}}` in SKILL.md ersetzen mit:
+```
+{project-slug}  (abgeleitet aus PROJECT_PATH letztes Segment in Kleinbuchstaben)
+Beispiel: /my/projects/analytics → analytics
+```
+Eintrag in CLAUDE.md §3 ergänzen (Bootstrap erledigt das automatisch):
+```
+> **PFLICHT bei Session-Ende:** Bei "Exit", "Tschüss", "Ende" → `/wrap-up` IMMER zuerst.
+```
 
 **Hinweis /calibrate:** calibrate ist nicht im Bootstrap enthalten — zu domain-spezifisch
 (Scoring/Gewichtungs-Kalibrierung für ML-Systeme). Bei Bedarf: `/skill-creator` verwenden.

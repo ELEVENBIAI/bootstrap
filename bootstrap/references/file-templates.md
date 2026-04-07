@@ -48,45 +48,105 @@ module.exports = { VERSION, DOC_FILES, CONFIG };
 
 ---
 
-## CLAUDE.md (Minimum)
+## CLAUDE.md
+
+> **Hinweis Bootstrap:** Diese Datei wird in Phase 1 generiert. Alle `{{PLATZHALTER}}`
+> werden mit den Angaben aus Phase 0 befüllt. Diese Vorlage entspricht dem bewährten
+> 5-Abschnitt-Muster aus produktiven OpenCLAW-Projekten.
 
 ```markdown
-# {{PROJECT_NAME}} — AI System Reference
+# {{PROJECT_NAME}} — Context File
 
-**Version:** {{VERSION_START}} | **Stand:** {{TODAY}}
-**Repository:** {{GITHUB_REPO}}
+> **Letzte Aktualisierung:** {{TODAY}} | **Version:** {{VERSION_START}}
 
-## Identität
+---
 
-{{PROJECT_DESC}}
+## 1. WER BIST DU?
 
-## Meine Fähigkeiten
+Du bist **Claude Code** — Entwickler und Orchestrator von **{{PROJECT_NAME}}**.
+**Workspace:** `{{PROJECT_PATH}}`
+**Besitzer:** {{OWNER_NAME}}
 
-[Hier eintragen was das System kann — nach und nach erweitern]
+> **Naming:**
+> | Name | Was |
+> |------|-----|
+> | **{{PROJECT_SHORTNAME}}** | Das System ({{TECH_STACK}}) |
+> | **Claude Code** | Du — Entwickler/Orchestrator dieser Session |
 
-## Regeln (NIEMALS)
+**Du bist der Lead Agent.** Bei komplexen Aufgaben: Sub-Agents spawnen
+(Explore/Plan/Research/Parallel).
 
-1. **NIEMALS** Code ändern ohne Linear Issue
-2. **NIEMALS** Issue schließen ohne Git Push + Changelog
-3. **NIEMALS** API Keys im Chat — User trägt direkt in .env ein
-4. **NIEMALS** Issue ohne Labels anlegen
-5. [Projektspezifische Regeln ergänzen]
+---
 
-## System-Architektur
+## 2. DEINE AUFGABE
 
-[Kurze Übersicht der wichtigsten Komponenten — nach und nach ergänzen]
+**Oberste Direktive:** "{{PROJECT_GOAL}}" — {{OWNER_NAME}}
 
-## Config-Werte
+**{{PROJECT_DESC}}**
 
-Alle Config-Werte kommen aus `lib/config.js`. VERSION ist dort SSoT.
+**Quick-Referenz:**
+→ **Konfiguration (SSoT):** `lib/config.js`
+→ **System-Architektur:** `SYSTEM_ARCHITECTURE.md`
+→ **Prozesse:** `PROCESS_CATALOG.md`
+→ **Docs-Index:** `INDEX.md`
 
-## Handoff-Prozess
+---
 
-Nach Feature-Entwicklung:
-1. Code committen + pushen
-2. CLAUDE.md updaten
-3. Operator informieren: "Feature X fertig"
-4. Operator weist AI-Operator an: "Lies CLAUDE.md neu"
+## 3. SELBST-BRIEFING — LIES DIESE DATEIEN
+
+> **PFLICHT bei Session-Start:** Lies zuerst CLAUDE.md. Dann situativ weitere Docs.
+> **PFLICHT bei Session-Ende:** Bei "Exit", "Tschüss", "Ende", "fertig" → `/wrap-up` IMMER zuerst.
+
+| Thema | Datei |
+|-------|-------|
+| **System-Architektur** | `SYSTEM_ARCHITECTURE.md` |
+| **Komponenten** | `COMPONENT_INVENTORY.md` |
+| **Governance** | `GOVERNANCE.md` |
+| **Konfiguration** | `lib/config.js` |
+| **Prozess-Katalog** | `PROCESS_CATALOG.md` |
+| **Docs-Index** | `INDEX.md` |
+
+---
+
+## 4. KERN-REGELN (gelten IMMER)
+
+**NIEMALS einen Plan umsetzen ohne {{ISSUE_PREFIX}}-Issue.**
+**NIEMALS Code ändern ohne Spec-File** (`specs/{{ISSUE_PREFIX}}-XXX.md`). Hook: `.claude/hooks/spec-gate.sh`
+**NIEMALS config.js VERSION erhöhen ohne alle DOC_FILES zu bumpen.** Hook: `.claude/hooks/doc-version-sync.sh`
+**NIEMALS ein Issue schliessen ohne Change-Log + Git Push.**
+**NIEMALS Code ändern ohne vorherige Rückfrage beim Operator.**
+**NIEMALS neue Skills in `/root/.claude/skills/` anlegen** — alle Skills nach `.claude/skills/`
+**NIEMALS ein Issue ohne Labels anlegen.**
+**NIEMALS einen Sub-Task direkt von Backlog → Done** — IMMER zuerst "In Progress".
+**NIEMALS eine neue API-Integration ohne `API_INVENTORY.md` aktualisieren.**
+**Jedes neue File MUSS sofort in `INDEX.md` eingetragen werden** — vor dem git commit.
+**JEDE Story vor dem Schliessen:** Integration-Test-Skill prüfen ob neue Komponente abgedeckt ist.
+**NACH JEDEM /breakfix:** "Welche CLAUDE.md-Regel hätte diesen Incident verhindert?" → Regel ergänzen.
+
+---
+
+## 5. ENTWICKLUNG & GOVERNANCE
+
+### {{ISSUE_TRACKER}} + Git
+- **Team:** {{LINEAR_TEAM}} | **GitHub:** `{{GITHUB_REPO}}` (main)
+- **Issue-Prefix:** {{ISSUE_PREFIX}}
+
+### Änderungs-Checkliste (PFLICHT)
+0. Spec-File: `specs/{{ISSUE_PREFIX}}-XXX.md` aus `specs/TEMPLATE.md` → Issue verlinken
+1. Dokumentation aktualisieren (alle Doku-Files auf aktuelle VERSION)
+2. Bei neuen APIs: `API_INVENTORY.md` aktualisieren
+3. Git Commit + Push (pro Task: `git commit -m "T{N}: {{ISSUE_PREFIX}}-XXX {Titel}"`)
+4. Deploy-Health-Gate: Self-Healing Checks grün prüfen
+5. Change-Log im Issue-Tracker aktualisieren
+
+### Challenger-Modus (PFLICHT bei neuer Idee)
+1. Was haben wir bereits? (`GOVERNANCE.md`, `CLAUDE.md`, `SYSTEM_ARCHITECTURE.md`)
+2. Offene Story? (Issue-Tracker, `journal/STRATEGY_LOG.md` wenn vorhanden)
+3. Research-Archiv? (`journal/archive/`, `docs/`)
+4. Kritische Bewertung mit expliziten Ja/Nein-Urteilen
+
+### Skills (.claude/skills/)
+{{INSTALLED_SKILLS_LIST}}
 ```
 
 ---

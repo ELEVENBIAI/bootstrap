@@ -17,9 +17,12 @@ ln -s /root/.claude/skills/backlog .claude/skills/backlog
 ln -s /root/.claude/skills/architecture-review .claude/skills/architecture-review
 ln -s /root/.claude/skills/sprint-review .claude/skills/sprint-review
 ln -s /root/.claude/skills/research .claude/skills/research
+ln -s /root/.claude/skills/wrap-up .claude/skills/wrap-up
 ln -s /root/.claude/skills/skill-creator .claude/skills/skill-creator
 # Optional:
 ln -s /root/.claude/skills/cloud-system-engineer .claude/skills/cloud-system-engineer
+ln -s /root/.claude/skills/excalidraw-diagram .claude/skills/excalidraw-diagram
+ln -s /root/.claude/skills/notebooklm .claude/skills/notebooklm
 ln -s /root/.claude/skills/visualize .claude/skills/visualize
 ```
 
@@ -40,7 +43,8 @@ Diese Referenz-Dateien MÜSSEN nach dem Kopieren projektspezifisch angepasst wer
 | `ideation/references/story-template-feature.md` | Domain-spezifische Sektionen |
 | `ideation/references/architecture-dimensions.md` | Relevante Dimensionen auswählen/ergänzen |
 | `implement/references/change-checklist.md` | Spezial-Checklisten (z.B. "Neuer Agent") |
-| `backlog/skill.md` | Linear Team-Name + Issue-Prefix |
+| `backlog/SKILL.md` | Linear Team-Name + Issue-Prefix |
+| `wrap-up/SKILL.md` | Memory-Pfad + Projekt-spezifische Synthese-Hinweise |
 
 ## Projekt-spezifische Skills (werden generiert, nicht kopiert)
 
@@ -61,6 +65,31 @@ Sie haben KEINE Quell-Kopie in `/root/.claude/skills/` — sie entstehen neu fü
 
 **calibrate:** Wird NICHT generiert — zu domain-spezifisch (Scoring/Gewichtungs-Kalibrierung).
 Bei Bedarf: manuell als neuen Skill aufbauen (→ `/skill-creator`).
+
+## Optionale Skills mit Voraussetzungen
+
+| Skill | Voraussetzung | Wofür |
+|-------|---------------|-------|
+| `research` | `OPENROUTER_API_KEY` (OpenRouter-Account) | Deep Research via Perplexity |
+| `cloud-system-engineer` | Hostinger MCP Server (`npx @hostinger/mcp-server`) | VPS-Infrastruktur via Hostinger |
+| `excalidraw-diagram` | keine | Architektur-Diagramme als Excalidraw JSON |
+| `notebooklm` | `notebooklm-py` CLI installiert (`pip install notebooklm-py`) | Google NotebookLM Automation |
+| `visualize` | Miro MCP Server + MIRO_ACCESS_TOKEN | Architektur-Diagramme in Miro |
+| `grafana` | Grafana MCP Server + GRAFANA_URL + GRAFANA_API_KEY | Dashboard-Entwicklung in Grafana Cloud |
+
+**Hostinger MCP Setup** (für cloud-system-engineer):
+```bash
+# In Claude Code settings.json:
+{
+  "mcpServers": {
+    "hostinger-mcp": {
+      "command": "npx",
+      "args": ["-y", "@hostinger/mcp-server"],
+      "env": { "HOSTINGER_API_KEY": "your_api_key" }
+    }
+  }
+}
+```
 
 ## .claude/ISSUE_WRITING_GUIDELINES.md
 
@@ -91,12 +120,18 @@ Aber: Für den Automation Daemon werden extra Permissions benötigt:
 
 ## Reihenfolge der Skill-Installation (nach Abhängigkeit)
 
-1. `/research` — keine Abhängigkeiten
+1. `/research` — keine Abhängigkeiten (benötigt OPENROUTER_API_KEY für Deep Tier)
 2. `/ideation` — benötigt story-templates + Linear
 3. `/backlog` — benötigt Linear
 4. `/implement` — benötigt change-checklist + git
 5. `/architecture-review` — benötigt dimensions-definition
-6. `/cloud-system-engineer` — benötigt Hostinger MCP (falls genutzt)
-7. `/sprint-review` — benötigt alle anderen
-8. `/visualize` — benötigt Miro Token
-9. `/skill-creator` — standalone
+6. `/wrap-up` — benötigt Memory-Pfad (wird bei Session-Ende aufgerufen)
+7. `/breakfix` — wird generiert: Issue-Prefix, Incident-Dir, Logs
+8. `/integration-test` — wird generiert: Tier-Checks definieren
+9. `/status` — wird generiert: Daemons + Dashboard definieren
+10. `/cloud-system-engineer` — benötigt Hostinger MCP (optional)
+11. `/excalidraw-diagram` — standalone, keine Voraussetzungen
+12. `/notebooklm` — benötigt notebooklm-py CLI
+13. `/sprint-review` — benötigt alle anderen
+14. `/visualize` — benötigt Miro Token + MCP
+15. `/skill-creator` — standalone

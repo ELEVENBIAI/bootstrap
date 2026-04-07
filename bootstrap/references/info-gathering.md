@@ -46,11 +46,14 @@ Welche Skills sollen installiert werden?
 - [ ] /ideation (empfohlen)
 - [ ] /implement (empfohlen)
 - [ ] /backlog (empfohlen)
+- [ ] /wrap-up (empfohlen — Session-Abschluss + Auto-Memory)
 - [ ] /architecture-review
 - [ ] /sprint-review
-- [ ] /research
-- [ ] /cloud-system-engineer (nur wenn Hostinger VPS genutzt wird)
-- [ ] /visualize (nur wenn Miro genutzt wird)
+- [ ] /research (benötigt OPENROUTER_API_KEY für Deep-Tier via Perplexity)
+- [ ] /excalidraw-diagram (Architektur-Diagramme als Excalidraw JSON — keine Deps)
+- [ ] /cloud-system-engineer (nur wenn Hostinger VPS + MCP Server eingerichtet)
+- [ ] /notebooklm (benötigt notebooklm-py CLI — `pip install notebooklm-py`)
+- [ ] /visualize (nur wenn Miro MCP + MIRO_ACCESS_TOKEN vorhanden)
 - [ ] /skill-creator
 
 **Projekt-spezifische Skills (werden vom Bootstrap generiert — Fragen werden gestellt):**
@@ -61,8 +64,8 @@ Welche Skills sollen installiert werden?
 - [ ] /status — System Status Dashboard
   → Bootstrap fragt: Daemons, Signal-Files, Dashboard-URL, Log-Files
 
-**Hinweis:** calibrate ist zu domain-spezifisch (Scoring/Gewichtungs-Kalibrierung)
-und wird NICHT generisch angeboten. Bei Bedarf manuell aufbauen.
+**Hinweis:** calibrate, briefing-dieter, grafana sind zu domain-spezifisch
+und werden NICHT generisch angeboten. Bei Bedarf manuell aufbauen (→ /skill-creator).
 
 ## Label-Taxonomie
 
