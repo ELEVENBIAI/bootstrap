@@ -1067,3 +1067,32 @@ Architektur-Entscheidungen die hier getroffen werden.]
 
 **Naechster Review:** [Datum in 4 Wochen]
 ```
+
+---
+
+## Empfohlene Docs-Kategorien (docs/)
+
+Neue Projekte sollten diese Kategorien anlegen sobald das System waechst:
+
+```
+docs/
+├── OPERATOR_CHEATSHEET.md    ← Quick-Reference fuer haeufige Ops-Aufgaben
+│                                (Restart, Reset, Befehle, Fehlercodes)
+├── RUNBOOK.md                ← Schritt-fuer-Schritt bei bekannten Problemen
+│                                (Wer macht was wenn X passiert?)
+├── MONITORING.md             ← Was wird gemessen, welche Alerts gibt es
+│                                (Metriken, Schwellwerte, Dashboards)
+├── DEPLOYMENT_ARCHITECTURE.md ← Container/Server-Setup
+│                                (Wie ist das System deployed?)
+└── SELF_HEALING.md           ← Welche Checks laufen automatisch
+                                 (Liste aller Self-Healing-Checks mit Status)
+```
+
+**Anlegen-Zeitpunkt:**
+| Datei | Anlegen wenn... |
+|-------|-----------------|
+| `OPERATOR_CHEATSHEET.md` | Erste Produktions-Deployments |
+| `RUNBOOK.md` | Erste wiederkehrende Probleme auftreten |
+| `MONITORING.md` | Erstes Alert-System konfiguriert |
+| `DEPLOYMENT_ARCHITECTURE.md` | Multi-Container oder Cloud-Setup |
+| `SELF_HEALING.md` | Erste automatische Checks implementiert |
