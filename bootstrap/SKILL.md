@@ -223,6 +223,7 @@ Aus `references/file-templates.md` mit Operator-Angaben befuellen:
 |-------|-----------------|
 | `lib/config.js` | config.js |
 | `CLAUDE.md` | CLAUDE.md |
+| `ARCHITECTURE_DESIGN.md` | architecture-design-template.md |
 | `SYSTEM_ARCHITECTURE.md` | SYSTEM_ARCHITECTURE.md |
 | `COMPONENT_INVENTORY.md` | COMPONENT_INVENTORY.md |
 | `.env.example` | .env.example |
