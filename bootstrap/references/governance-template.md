@@ -278,7 +278,7 @@ Jederzeit:  /research (fuer externe Recherchen)
 | 1 | **Issue identifizieren** | Linear Issue laden, Description lesen, Pflicht-Sektionen pruefen |
 | 2 | **Abhaengigkeiten pruefen** | Benoetigt-Issues done? Beeinflusst-Issues notieren |
 | 3 | **Context sammeln** (parallel) | Betroffene Dateien, CLAUDE.md, SYSTEM_ARCHITECTURE.md, config.js |
-| 4 | **Plan + Approval** ← HUMAN-IN-THE-LOOP | Dateiliste, Aenderungen, Risiken |
+| 4 | **Spec + Agent-Team-Check + Approval** ← HUMAN-IN-THE-LOOP | Spec-File erstellen, `## Agent Team Setup` aus Issue lesen → Solo/Subagent/Team-Plan, Operator-Freigabe |
 | 5 | **Implementieren** | Code, Doku-Update, Change-Checklist, Git Commit + Push |
 | 6 | **Validation** | Syntax, Akzeptanzkriterien, Smoke Test → PASS/FAIL |
 | 7 | **Backlog aktualisieren** | Issue → Done + Kommentar, Obsidian Change-Log |

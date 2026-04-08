@@ -92,6 +92,14 @@ Du bist **Claude Code** — Entwickler und Orchestrator von **{{PROJECT_NAME}}**
 
 **Agent-Team auslösen wenn:** Spec enthält `🤖 Agent-Team` ODER Story hat >3 unabhängige Tasks ODER Debugging mit unklarer Ursache (Racing Hypotheses).
 
+**Konkrete Team-Patterns (die 4 häufigsten Cases):**
+| Case | Team-Zusammensetzung |
+|------|---------------------|
+| **Neue Feature-Story** | Lead (Sonnet) + Explore-Agent (Haiku) + Plan-Agent (Sonnet) |
+| **Architektur-Review** | Lead (Opus) + 2 Debatter-Agents (Sonnet) mit konkurrierenden Meinungen |
+| **Bugfix mit unklarer Ursache** | Lead (Sonnet) + 2 Hypothesen-Agents (Sonnet) Racing parallel |
+| **Große Refactoring-Story** | Lead (Sonnet) + Builder-Agent (Sonnet) + Tester-Agent (Haiku) parallel |
+
 ---
 
 ## 2. DEINE AUFGABE
