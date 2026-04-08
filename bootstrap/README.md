@@ -21,6 +21,97 @@ Die meisten AI-Development-Frameworks sind entweder zu viel Automation (Black Bo
 
 ---
 
+## Detaillierter Framework-Vergleich
+
+### OpenCLAW Bootstrap vs. CrewAI vs. AutoGen vs. BMAD vs. Cursor Rules
+
+> Tausende AI-Development-Frameworks existieren. Hier ist eine ehrliche Einordnung — was andere besser machen, was dieses Framework einzigartig macht, und wann du welches wählen solltest.
+
+| Dimension | **OpenCLAW Bootstrap** | CrewAI | AutoGen / AG2 | BMAD | Cursor Rules |
+|-----------|------------------------|--------|---------------|------|--------------|
+| **Governance-Enforcement** | ✅ Maschinell erzwungen (Git Hooks) | ❌ Keine | ❌ Keine | ⚠️ Manuell | ❌ Keine |
+| **Traceability** | ✅ Idee → Issue → Spec → Commit | ❌ | ❌ | ⚠️ Partiell | ❌ |
+| **Human-in-the-Loop** | ✅ Erzwungen (Spec-Freigabe) | ⚠️ Optional | ⚠️ Optional | ✅ Explizit | ❌ |
+| **Self-Healing** | ✅ Cron, 15 Min, auto-korrigiert | ❌ | ❌ | ❌ | ❌ |
+| **Learning-Loop** | ✅ Outcome-Check + LEARNINGS.md | ❌ | ❌ | ❌ | ❌ |
+| **Modell-Routing** | ✅ Opus/Sonnet/Haiku je Task-Typ | ⚠️ Konfigurierbar | ✅ Gut | ❌ | ❌ |
+| **Multi-Agent Orchestrierung** | ✅ Agent-Teams + Parallel-Subagents | ✅ Stark | ✅ Sehr stark | ⚠️ Manuell | ❌ |
+| **Deploy-Automation** | ⚠️ Teilweise (Git Push + Manual) | ❌ | ❌ | ❌ | ❌ |
+| **Portabilität** | ✅ Zero Dependencies, 1 Ordner | ⚠️ pip install | ⚠️ pip install | ⚠️ Prompt-Files | ✅ |
+| **Projekt-Setup-Zeit** | ~30 Min (geführt) | Stunden | Stunden | ~1h | Minuten |
+| **Zielgruppe** | Solo-Dev bis kleines Team | Enterprise-Teams | Forschung / Quality | Agile Teams | Einzelentwickler |
+
+### Was andere Frameworks besser machen
+
+| Framework | Echte Stärke | Wann bevorzugen |
+|-----------|-------------|-----------------|
+| **CrewAI** | Skalierbare Role-based Crews für Enterprise — 60% der Fortune 500 nutzen es. Beste Wahl wenn >10 Agents koordiniert werden müssen. | Großes Team, viele parallele Workflows, Enterprise-Compliance-Anforderungen |
+| **AutoGen / AG2** | Debate-Pattern: 2 Agents argumentieren gegeneinander bis zur besten Lösung. Höchste Ausgabequalität für komplexe Analyse-Aufgaben. | Forschung, Code-Review mit höchsten Qualitätsanforderungen, offline Batch-Prozesse |
+| **BMAD** | Strukturierter Agile-Workflow mit klaren Rollen (PM, Architect, Developer). Gut dokumentiert, große Community. | Teams die Scrum/Agile bereits kennen und einen AI-nativen Workflow wollen |
+| **Cursor Rules** | Sofort einsatzbereit, keine Setup-Zeit, direkt im Editor. | Einzelentwickler die schnell starten wollen ohne Governance-Overhead |
+
+### Was OpenCLAW Bootstrap einzigartig macht
+
+**1. Governance ist maschinell erzwungen — nicht nur dokumentiert**
+
+Andere Frameworks haben READMEs mit Best Practices. Dieses Framework hat Git Hooks die physisch blockieren:
+```
+git commit → spec-gate.sh → BLOCKED wenn kein specs/ISSUE-XX.md existiert
+git push   → doc-version-sync.sh → BLOCKED wenn Doku-Dateien veraltet sind
+```
+Kein anderes Framework in diesem Vergleich hat das.
+
+**2. Vollständige Traceability ohne manuellen Aufwand**
+
+Jede Änderung hinterlässt automatisch eine vollständige Spur:
+```
+💡 Idee → /ideation → 📋 Linear Issue (4 Perspektiven + ACs)
+→ specs/ISSUE-XX.md (Operator-Freigabe) → git commit "T1: ..."
+→ CHANGELOG.md (auto) → Obsidian Vault (auto-sync) → Issue Done
+```
+6 Monate später weißt du exakt warum jede Codezeile existiert.
+
+**3. Learning-Loop: Framework wird mit jeder Story klüger**
+
+Beim Setup: Primärmetrik + Baseline + Ziel definieren (z.B. "WinRate 33% → 45%").
+Nach jedem Issue-Close: Outcome-Check-Datum gesetzt, Ergebnis in `journal/LEARNINGS.md`.
+Claude weiß nach 10 Stories: "Stories mit Typ X verbessern die Metrik, Typ Y nicht."
+Kein anderes Framework tracked Business-Outcomes systematisch.
+
+**4. Self-Healing ohne Ops-Team**
+
+Ein Cron-Agent läuft alle 15 Minuten und korrigiert automatisch:
+- Versions-Drift zwischen Doku-Dateien → auto-sync
+- Gestoppte Daemons → auto-restart mit Backoff
+- Telegram-Alert bei Anomalien
+
+Solo-Entwickler oder kleines Team ohne dediziertes Ops kann damit zuverlässig produzieren.
+
+**5. Portabel — ein Ordner, null Dependencies**
+
+```bash
+cp -r bootstrap/ /root/.claude/skills/bootstrap/
+# Fertig. Keine pip install, keine npm, keine Cloud-Abhängigkeiten.
+```
+Läuft auf Mac, VPS, Claude Code Desktop — überall gleich.
+
+### Wann OpenCLAW Bootstrap wählen
+
+✅ **Ideal wenn:**
+- Solo-Entwickler oder Team bis ~5 Personen
+- Langlebiges Projekt (>3 Monate) das wartbar bleiben muss
+- Produktion mit echten Business-Metriken (WinRate, Conversion, Latenz)
+- Compliance oder Audit-Anforderungen (vollständige Traceability benötigt)
+- Claude Code als primäres AI-Tool
+
+⚠️ **Nicht ideal wenn:**
+- Kurzes Experiment oder Proof-of-Concept (<2 Wochen)
+- Großes Team (>10) mit eigener CI/CD-Pipeline (→ CrewAI oder AutoGen besser)
+- Maximale Ausgabequalität wichtiger als Governance (→ AutoGen Debate-Pattern)
+- Kein Linear-Account gewünscht (Ticket-System ist Kernvoraussetzung)
+
+---
+
 ## Was dieser Skill macht
 
 Wenn du `/bootstrap` in Claude Code eingibst, führt er dich durch die Einrichtung von:

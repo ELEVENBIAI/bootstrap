@@ -283,6 +283,20 @@ Jederzeit:  /research (fuer externe Recherchen)
 | 6 | **Validation** | Syntax, Akzeptanzkriterien, Smoke Test → PASS/FAIL |
 | 7 | **Backlog aktualisieren** | Issue → Done + Kommentar, Obsidian Change-Log |
 | 8 | **Ergebnis-Tabelle ausgeben** | Was wurde implementiert (Datei/Komponente), Status, Bemerkungen |
+| 9 | **Outcome-Check planen** | Linear-Kommentar: "⏰ Outcome-Check fällig {{+7 Tage}}: War {{METRIC_PRIMARY}} = {{METRIC_TARGET}} erreicht?" + Reminder in `journal/LEARNINGS.md` eintragen |
+
+### 4.3a Outcome-Check-Prozess (Learning-Loop)
+
+Nach Ablauf des Outcome-Check-Datums:
+
+1. Aktuellen Wert von `{{METRIC_PRIMARY}}` messen
+2. Vergleich mit Ziel aus Spec `## Erwarteter Outcome`
+3. Eintrag in `journal/LEARNINGS.md` Tabelle:
+   - Was war erwartet / was eingetreten / Δ Metrik
+4. Falls Ziel nicht erreicht: `/ideation` mit Kontext aus diesem Learning starten
+5. Falls Ziel übertroffen: Strategisches Learning in LEARNINGS.md §Strategische Learnings
+
+**Trigger für Operator:** Wenn `/wrap-up` ausgeführt wird und offene Outcome-Checks vorhanden sind → Claude erinnert daran.
 
 ### 4.4 Automatischer Prozess (Daemon, optional)
 

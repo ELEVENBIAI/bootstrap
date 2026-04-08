@@ -38,6 +38,24 @@ Details: siehe `bootstrap/README.md` Sektion "SSH-Zugang zu GitHub einrichten".
 | `VERSION_START` * | Start-Version | `1.0.0` |
 | `OBSIDIAN_VAULT` * | Absoluter Pfad zum Obsidian Vault | `/root/myvault/` |
 
+## Erfolgsmetriken (Pflicht — schließt den Learning-Loop)
+
+> **Warum Pflicht?** Ohne diese 3 Felder kann Claude nicht beurteilen ob eine Story "gut" war.
+> Sie fließen in CLAUDE.md §2 (Proaktive Pflicht), specs/TEMPLATE.md (Erwarteter Outcome)
+> und journal/LEARNINGS.md (Baseline Tag 0) ein.
+
+| Variable | Frage an Operator | Beispiel |
+|----------|------------------|---------|
+| `METRIC_PRIMARY` * | Was ist deine **primäre Erfolgsmetrik**? Ein Wort oder kurzer Begriff. | `WinRate`, `Conversion Rate`, `API-Latenz`, `Deploy-Zeit`, `Fehlerrate` |
+| `METRIC_BASELINE` * | Was ist der **aktuelle Wert** dieser Metrik heute? | `33%`, `800ms`, `2.4%`, `45 Min` |
+| `METRIC_TARGET` * | Was gilt als **Erfolg**? Zielwert der angestrebt wird. | `> 45%`, `< 200ms`, `> 5%`, `< 10 Min` |
+
+**Claude setzt diese Werte ein in:**
+1. `CLAUDE.md §2` → "Verbessert das {{METRIC_PRIMARY}}?" als Proaktive Pflicht
+2. `specs/TEMPLATE.md` → `## Erwarteter Outcome` vorausgefüllt mit {{METRIC_PRIMARY}}
+3. `journal/LEARNINGS.md` → Baseline-Eintrag bei Setup: "Tag 0: {{METRIC_PRIMARY}} = {{METRIC_BASELINE}}"
+4. Outcome-Check nach Issue-Close: War {{METRIC_TARGET}} erreicht?
+
 ## Optionale Informationen
 
 | Variable | Frage an Operator | Default |

@@ -289,6 +289,38 @@ Ausserdem anlegen (aus eingebetteten Templates — **kein cp von externen Pfaden
 Direkt anlegen (kurze Skelette):
 - `DEVELOPMENT_PROCESS.md` — Verweis auf GOVERNANCE.md §4, projekt-spezifische Ergaenzungen
 - `SECURITY.md` — Minimales Skelett: API Key Policy, Threat Model Placeholder
+- `journal/LEARNINGS.md` — **Learning-Loop Baseline** (aus Metrik-Angaben Phase 0):
+
+```markdown
+# {{PROJECT_NAME}} — Learning Log
+
+> Outcome-Checks nach Issue-Close. Schließt den Feedback-Loop zwischen Implementierung und Effekt.
+
+## Metrik-Definition
+
+| Feld | Wert |
+|------|------|
+| **Primäre Metrik** | {{METRIC_PRIMARY}} |
+| **Baseline (Setup-Tag)** | {{METRIC_BASELINE}} |
+| **Ziel** | {{METRIC_TARGET}} |
+| **Gemessen am** | {{TODAY}} |
+
+---
+
+## Outcome-Checks
+
+<!-- Nach jedem Issue-Close: Eintrag hier wenn Check-Datum erreicht -->
+
+| Datum | Issue | Was wurde erwartet | Was tatsächlich eingetreten | Δ Metrik |
+|-------|-------|-------------------|--------------------------|---------|
+| _(leer — wird gefüllt)_ | | | | |
+
+---
+
+## Strategische Learnings
+
+<!-- Was hat generell funktioniert / nicht funktioniert — aus mehreren Issues -->
+```
 
 ### 1.4 .env anlegen
 
@@ -348,6 +380,7 @@ git add CLAUDE.md SYSTEM_ARCHITECTURE.md COMPONENT_INVENTORY.md DEVELOPMENT_PROC
 git add GOVERNANCE.md SECURITY.md CHANGELOG.md .gitignore .env.example
 git add lib/config.js lib/doc-sync.js agents/self-healing.js
 git add .claude/ISSUE_WRITING_GUIDELINES.md
+git add journal/LEARNINGS.md
 git commit -m "v{VERSION_START} — Initial Governance Setup"
 git push -u origin main
 ```

@@ -108,8 +108,7 @@ Du bist **Claude Code** — Entwickler und Orchestrator von **{{PROJECT_NAME}}**
 
 **{{PROJECT_DESC}}**
 
-**Proaktive Pflicht:** Bei jeder Session aktiv fragen: "Verbessert das die
-Kernziele — oder blockiert ein strukturelles Problem das gerade?"
+**Proaktive Pflicht:** Bei jeder Session aktiv fragen: "Verbessert das **{{METRIC_PRIMARY}}** (Ziel: {{METRIC_TARGET}}, aktuell: {{METRIC_BASELINE}}) — oder blockiert ein strukturelles Problem das gerade?"
 Architektonische Blocker (fehlende Tests, kaputte Gates, inaktive Komponenten)
 **ohne Aufforderung** melden.
 
@@ -1058,6 +1057,21 @@ Architektur-Entscheidungen die hier getroffen werden.]
 | Docs / Reviews | Solo |
 
 **Gewaehlt:** [ ] Solo  [ ] Team — [Begruendung in einem Satz]
+
+## Erwarteter Outcome (Learning-Loop)
+
+> Wird nach Issue-Close ausgewertet. Schließt den Feedback-Loop zwischen Implementierung und Business-Effekt.
+
+| Feld | Wert |
+|------|------|
+| **Metrik** | {{METRIC_PRIMARY}} |
+| **Baseline (heute)** | {{METRIC_BASELINE}} |
+| **Ziel** | {{METRIC_TARGET}} |
+| **Outcome-Check-Datum** | {{TODAY + 7 Tage}} |
+| **Ergebnis** | _(wird nach Check ausgefüllt)_ |
+
+**Warum diese Story {{METRIC_PRIMARY}} verbessert:**
+[Ein Satz — mechanistisch erklären warum dieser Change die Metrik bewegt]
 
 ---
 
