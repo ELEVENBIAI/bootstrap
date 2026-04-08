@@ -378,7 +378,7 @@ Ohne diesen Schritt wiederholt sich der Incident.
 - [ ] G-02 Proaktive Pflicht §2
 - [ ] G-03 Rollback-Pläne §6
 - [x] G-04 settings.json Hook-Aktivierung
-- [ ] G-05 Agent Team Setup
+- [x] G-05 Agent Team Setup (via G-07 abgedeckt)
 - [ ] G-06 governance-template.md Abschnitte
 - [x] G-07 specs/TEMPLATE.md Sektionen
 - [ ] G-08 ARCHITECTURE_DESIGN.md Template
