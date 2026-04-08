@@ -900,46 +900,108 @@ sonar.javascript.environments=node
 # {{ISSUE_PREFIX}}XXX — [Story-Titel]
 
 **Status:** Draft | **Erstellt:** {{TODAY}} | **Letzte Aenderung:** {{TODAY}}
-**Geschaetzte Komplexitaet:** XS / S / M / L / XL
+**Linear:** [Link zum Issue]
 **Workflow-Type:** Feature / Bug Fix / Refactor / Infra / Docs
+
+---
+
+## Sizing
+
+| Kriterium | Wert |
+|-----------|------|
+| **Komplexitaet** | XS (< 1h) / S (1-3h) / M (3-8h) / L (1-2d) / XL (> 2d) |
+| **Story Points** | [1-8] |
+| **Dateien betroffen** | [Anzahl — max 10 pro Story, max 3 pro Task] |
 
 ---
 
 ## Warum? (Problem / Motivation)
 
-[Was ist das Problem oder die Luecke die diese Story loest?]
+[Was ist das Problem oder die Luecke die diese Story loest?
+Quantifiziert wenn moeglich: "X% langsamer", "Y Fehler/Woche"]
+
+## Current State
+
+[Wie funktioniert das aktuell? Welche Dateien/Komponenten sind betroffen?
+Verhindert blinde Implementierungen ohne bestehenden Code zu kennen.]
 
 ## Was? (Solution / Scope)
 
-[Was wird implementiert? Was explizit NICHT?]
+[Was wird implementiert? Was explizit NICHT?
+Architektur-Entscheidungen die hier getroffen werden.]
 
-## Kontext
+## DB / Schema Impact
 
-[Welche Dateien, Komponenten, oder Systeme sind betroffen?]
+- [ ] Kein Schema-Change
+- [ ] Schema-Change: [Beschreibung der Aenderung, Migration notwendig?]
+
+## Dokumentations-Impact
+
+- [ ] Kein Doku-Update noetig
+- [ ] Folgende Dateien muessen aktualisiert werden:
+  - `SYSTEM_ARCHITECTURE.md` — [warum]
+  - `COMPONENT_INVENTORY.md` — [warum]
+  - `API_INVENTORY.md` — [nur bei neuen APIs]
 
 ## Akzeptanzkriterien
 
-- [ ] [Messbares Kriterium 1]
+- [ ] [Messbares Kriterium 1 — was genau wird getestet?]
 - [ ] [Messbares Kriterium 2]
 - [ ] [Messbares Kriterium 3]
+- [ ] Dokumentation aktualisiert (alle betroffenen DOC_FILES)
+- [ ] Integration-Test-Skill: neue Komponente abgedeckt? (Ja/Nein — falls Nein: Skill angepasst)
+- [ ] Git Push erfolgt
 
 ## Tasks
 
-- [ ] T1: [Erster konkreter Schritt]
-  - Verify: [Wie pruefe ich ob T1 erledigt ist?]
+**Task Design Rules:**
+- Max 3 Dateien pro Task
+- Jeder Task hat einen konkreten Verify-Step
+- Letzter Task ist IMMER: Doku + Config + INDEX.md
+
+- [ ] T1: [Erster konkreter Schritt] (max 3 Dateien)
+  - Dateien: `path/to/file.js`, `...`
+  - Verify: [Wie pruefe ich ob T1 erledigt ist? Konkreter Befehl oder Check]
 - [ ] T2: [Zweiter Schritt]
+  - Dateien: `...`
   - Verify: [Pruef-Schritt]
+- [ ] T_last: Doku-Update + Config + INDEX.md
+  - Dateien: betroffene DOC_FILES, `INDEX.md`
+  - Verify: Self-Healing Checks gruen / alle DOC_FILES auf aktueller VERSION
 
 ## Abhaengigkeiten
 
-- **Blockiert durch:** [Issues oder externe Abhaengigkeiten]
-- **Blockiert:** [Welche anderen Issues warten auf diese Story?]
+- **Blockiert durch:** [Issues oder externe Abhaengigkeiten — oder "keine"]
+- **Blockiert:** [Welche anderen Issues warten auf diese Story? — oder "keine"]
+
+## Rollback Plan
+
+| Trigger | Massnahme |
+|---------|-----------|
+| [Fehlerbedingung] | [Wie rueckgaengig machen?] |
+| Deployment schlaegt fehl | `git revert HEAD` + deploy |
 
 ## Sicherheits-Check
 
 - [ ] Keine Credentials im Code
 - [ ] Input-Validierung an Systemgrenzen
+- [ ] Keine `eval()` oder dynamische Code-Ausfuehrung
 - [ ] [Domainspezifische Checks ergaenzen]
+
+## Agent Team Setup
+
+**Solo oder Team?**
+
+| Kriterium | Empfehlung |
+|-----------|-----------|
+| Mehrere Dateien/Layer betroffen (> 5 Dateien) | Team (+ Architect) |
+| Blockiert andere Stories | Team |
+| Sicherheits-/Compliance-relevant | Team + Security Review |
+| Infra-Aenderungen (Docker, Cron, DNS) | Team + Cloud Engineer |
+| Einzelne Komponente, klares Template | Solo |
+| Docs / Reviews | Solo |
+
+**Gewaehlt:** [ ] Solo  [ ] Team — [Begruendung in einem Satz]
 
 ---
 

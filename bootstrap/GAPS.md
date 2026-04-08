@@ -380,7 +380,7 @@ Ohne diesen Schritt wiederholt sich der Incident.
 - [x] G-04 settings.json Hook-Aktivierung
 - [ ] G-05 Agent Team Setup
 - [ ] G-06 governance-template.md Abschnitte
-- [ ] G-07 specs/TEMPLATE.md Sektionen
+- [x] G-07 specs/TEMPLATE.md Sektionen
 - [ ] G-08 ARCHITECTURE_DESIGN.md Template
 - [ ] G-09 journal/STRATEGY_LOG.md
 - [ ] G-10 Docs-Kategorien
