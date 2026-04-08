@@ -34,6 +34,22 @@ Every change is:
 3. **Monitored** by the self-healing agent (version drift detected in 15 min)
 4. **Reproducible** because every workflow is a skill
 
+```mermaid
+flowchart LR
+    A["💡 Idea"] --> B["/ideation\nResearch + Story"]
+    B --> C["📋 Linear Issue"]
+    C --> D["/implement\n8-step SDLC"]
+    D --> E{"🔒 spec-gate.sh\nSpec exists?"}
+    E -->|"No Spec"| F["Create\nspecs/ISSUE-XX.md"]
+    F --> E
+    E -->|"Spec OK"| G{"🔒 doc-version-sync.sh\nVersions in sync?"}
+    G -->|"Drift"| H["Sync all DOC_FILES"]
+    H --> G
+    G -->|"In Sync"| I["📦 git push\ncode + docs"]
+    I --> J["✅ Done + Changelog"]
+    K["🔄 Self-Healing\nevery 15 min"] -.-> J
+```
+
 ---
 
 ## Installation
@@ -91,6 +107,14 @@ Claude will ask you for these during Phase 0:
 bootstrap/
 ├── SKILL.md                                    ← Skill definition (Claude reads this)
 ├── README.md                                   ← This file
+├── docs/
+│   └── diagrams/                               ← Visual diagrams (Mermaid in README + high-res exports)
+│       ├── 01-development-lifecycle.excalidraw ← Source (open at excalidraw.com)
+│       ├── 01-development-lifecycle.png        ← High-res PNG export
+│       ├── 02-governance-enforcement.excalidraw
+│       ├── 02-governance-enforcement.png
+│       ├── 03-bootstrap-phases.excalidraw
+│       └── 03-bootstrap-phases.png
 └── references/
     ├── info-gathering.md                       ← Checklist of infos to collect
     ├── file-templates.md                       ← config.js, CLAUDE.md, etc. templates
@@ -114,6 +138,16 @@ bootstrap/
 | **3 — Self-Healing** | Writes + tests self-healing + doc-sync | None |
 | **4 — Daemon** (optional) | Linear automation daemon skeleton | Yes if enabled |
 | **5 — Registry** | Updates global CLAUDE.md + memory | None |
+
+```mermaid
+flowchart LR
+    P0["Phase 0\n📋 Info-Gathering\n14 questions"] --> P1["Phase 1\n🏗️ Foundation\nFiles + Git + Hooks"]
+    P1 --> P2["Phase 2\n🛠️ Skills\nideation + implement\n+ breakfix + ..."]
+    P2 --> P3["Phase 3\n🔄 Self-Healing\nversion monitor + sync"]
+    P3 --> P4["Phase 4\n⚡ Daemon\noptional"]
+    P4 --> P5["Phase 5\n🌐 Registry\nGlobal CLAUDE.md"]
+    P5 --> DONE["🚀 Ready for\n/ideation"]
+```
 
 ---
 
@@ -160,6 +194,27 @@ Eight unbreakable rules Claude follows in this framework:
 6. **Never create an issue without labels** — labels are essential for filtering
 7. **Never move sub-tasks directly to Done** — always go through "In Progress" first
 8. **Never add an API integration without updating the API inventory**
+
+```mermaid
+sequenceDiagram
+    participant Dev as Claude Code
+    participant SG as 🔒 spec-gate.sh
+    participant DS as 🔒 doc-version-sync.sh
+    participant GH as 📦 GitHub
+
+    Dev->>SG: git commit attempt
+    alt No Spec File found
+        SG-->>Dev: BLOCKED — create specs/ISSUE-XX.md first
+    else Spec File exists
+        SG->>DS: ✅ Spec OK — check versions
+        alt VERSION mismatch in DOC_FILES
+            DS-->>Dev: BLOCKED — sync all docs to current VERSION
+        else All DOC_FILES in sync
+            DS->>GH: ✅ Commit + Push
+            GH-->>Dev: Done — Issue can be closed
+        end
+    end
+```
 
 ---
 
