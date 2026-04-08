@@ -265,14 +265,48 @@ node_modules/
 
 ---
 
-## settings.json Ergänzungen
+## settings.json (Hooks + Permissions)
 
-In `/root/.claude/settings.json` unter `permissions.allow` ergänzen:
+> **PFLICHT:** Hooks laufen NICHT automatisch — sie müssen in `settings.json` registriert werden.
+> Ohne diesen Eintrag sind `spec-gate.sh` und `doc-version-sync.sh` wirkungslos.
+
+Erstelle `.claude/settings.json` im Projekt-Root:
+
 ```json
-"Bash(git:*)",
-"Bash(node:*)",
-"Bash(npm:*)"
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "mcp__claude_ai_Linear__save_comment",
+      "mcp__claude_ai_Linear__list_issues"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/spec-gate.sh" },
+          { "type": "command", "command": "bash .claude/hooks/doc-version-sync.sh" }
+        ]
+      }
+    ]
+  }
+}
 ```
+
+**Was diese Einträge bewirken:**
+| Eintrag | Wirkung |
+|---------|---------|
+| `Bash(git:*)` | Claude darf git-Kommandos ausführen |
+| `Bash(node:*)` | Claude darf Node.js-Skripte ausführen |
+| `hooks.PreToolUse` | Hooks werden VOR jedem Bash-Aufruf ausgeführt |
+| `spec-gate.sh` | Blockiert `git commit` wenn kein Spec-File existiert |
+| `doc-version-sync.sh` | Blockiert `git commit` wenn Doku nicht auf aktueller VERSION |
+
+**Hinweis:** Weitere `permissions.allow`-Einträge nach Bedarf ergänzen (API-Calls, MCP-Tools, etc.).
 
 Nested-Session-Fix in `.env` des Projekts:
 ```
