@@ -386,4 +386,4 @@ Ohne diesen Schritt wiederholt sich der Incident.
 - [x] G-10 Docs-Kategorien
 - ❌ G-11 integration-test Architektur-Karte — ausgeschlossen (CLAW-spezifisch)
 - ❌ G-12 status Architektur-Radar — ausgeschlossen (CLAW-spezifisch)
-- [ ] G-13 breakfix CLAUDE.md-Regel-Learning
+- [x] G-13 breakfix CLAUDE.md-Regel-Learning

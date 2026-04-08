@@ -186,20 +186,26 @@ Konkrete Maßnahme als Linear-Issue anlegen wenn Aufwand > 30 Minuten.
 
 ---
 
-### Schritt 7: CLAUDE.md REGEL — Lesson learned festhalten
+### Schritt 7: CLAUDE.md REGEL — Lesson learned festhalten (PFLICHT)
 
-**Letzter Schritt immer:**
+**Letzter Schritt immer — ohne Ausnahme:**
 
-Frage: "Welche CLAUDE.md-Regel hätte diesen Incident verhindert?"
-
-Bei klarer Antwort → Regel in CLAUDE.md Abschnitt "Kern-Regeln" ergänzen:
-
-```
-**NACH JEDEM /breakfix als letzter Schritt:** "Welche CLAUDE.md-Regel hätte diesen
-Incident verhindert?" — Bei klarer Antwort: Regel sofort ergänzen.
-```
+1. Frage: "Welche CLAUDE.md-Regel hätte diesen Incident verhindert?"
+2. Regel formulieren: `**NIEMALS [X] ohne [Y]** — [Kurzbegründung]`
+3. Regel in CLAUDE.md §4 "Kern-Regeln" eintragen
+4. Regel im Incident-File dokumentieren:
+   ```
+   ## CLAUDE.md-Regel
+   **NIEMALS [X] ohne [Y]** — [Kurzbegründung]
+   (ergänzt nach {{ISSUE_PREFIX}}XXX, {{TODAY}})
+   ```
 
 Operator informieren: "Schritt 7 abgeschlossen. Neue Regel: [Regel-Text]"
+
+> **Ziel:** Jeder Incident macht das System dauerhaft resilienter.
+> Ohne diesen Schritt wiederholt sich der Incident — der Root Cause bleibt in der
+> Governance unverankert und kann erneut auftreten.
+> Nach 10 Incidents: 10 neue CLAUDE.md-Regeln = das System hat aus 10 Fehlern gelernt.
 
 ---
 
