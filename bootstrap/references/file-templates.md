@@ -337,10 +337,86 @@ LINEAR_WEBHOOK_SECRET=
 ## .gitignore (Minimum)
 
 ```
-node_modules/
+# Secrets — niemals committen
 .env
+.env.*
+*.pem
+*.key
+
+# Build-Artefakte
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+.venv/
+
+# Logs + Daten
 *.log
+*.jsonl
+
+# IDE + System
 .DS_Store
+.idea/
+coverage/
+
+# Persoenliche Claude-Overrides (nur fuer dich, nicht fuer das Team)
+CLAUDE.local.md
+
+# Lock-Dateien (optional — je nach Team-Absprache)
+# package-lock.json
+# yarn.lock
+```
+
+---
+
+## .claudeignore (Pflicht — Kontextschutz)
+
+> **Warum Pflicht:** Ohne .claudeignore liest Claude node_modules (100'000+ Dateien).
+> Ein einziger Dateisuche-Aufruf kann 30-40% des Kontextfensters mit irrelevantem Inhalt fuellen.
+> Ausserdem schutzt .claudeignore davor, dass Claude .env-Dateien in seinen Kontext laedt.
+
+```
+# Build-Artefakte (riesig, fuer Claude irrelevant)
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets — Claude darf diese NIE lesen
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs + wachsende Datendateien
+*.log
+*.jsonl
+logs/
+data/*.db
+data/*.sqlite
+
+# IDE + System
+.DS_Store
+.idea/
+.vscode/settings.json
+
+# Lock-Dateien (sehr gross, Claude braucht sie nie)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Coverage + Test-Artefakte
+coverage/
+.nyc_output/
+
+# Generierte Docs (Claude kennt die Quell-Docs)
+docs/generated/
 ```
 
 ---

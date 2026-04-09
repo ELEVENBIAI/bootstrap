@@ -20,6 +20,7 @@ Referenzen:
 - `references/mcp-setup.md` — MCP-Server-Setup fuer Linear, Grafana, Supabase, Hostinger etc. + settings.json Template
 - `references/telegram-setup.md` — Telegram Bot erstellen, Chat-ID ermitteln, Self-Healing-Integration, Linear-Webhook
 - `references/grafana-monitoring.md` — Grafana Cloud + Alloy + /grafana Skill Nutzungsmuster
+- `references/agent-patterns.md` — 4 Team-Patterns als .claude/rules/ Vorlage (Lazy Loading)
 - `references/self-healing-template.js` — Self-Healing Agent Starter
 - `references/doc-sync-template.js` — Doc-Sync Module Starter
 - `references/issue-writing-guidelines-template.md` — Issue Writing Guidelines
@@ -226,6 +227,139 @@ Speichere `{{OBSIDIAN_VAULT_PATH}}` fuer Phase 3.2 (wird dort in `lib/doc-sync.j
 
 ---
 
+## Phase 0a: Global Claude Code Settings pruefen + einrichten
+
+**Vor dem Projekt-Setup:** Die globale Claude Code Konfiguration bestimmt das Verhalten
+in ALLEN Projekten auf dieser Maschine. Bootstrap prueft und richtet sie ein — einmalig.
+
+---
+
+### 0a.1 — ~/.claude/settings.json pruefen
+
+```bash
+cat ~/.claude/settings.json 2>/dev/null || echo "NICHT VORHANDEN"
+```
+
+**Pruefe folgende Felder:**
+
+| Feld | Soll-Wert | Bedeutung |
+|------|-----------|-----------|
+| `autoMemoryEnabled` | `true` | Auto-Memory — Claude speichert Session-Erkenntnisse automatisch |
+| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` | Agent-Teams aktiviert — sonst immer Solo |
+
+**Wenn Datei fehlt oder Felder fehlen/falsch → anlegen/ergaenzen:**
+
+```bash
+mkdir -p ~/.claude
+```
+
+Schreibe oder merge in `~/.claude/settings.json`:
+
+```json
+{
+  "autoMemoryEnabled": true,
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(node *)",
+      "Bash(npm *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)"
+    ]
+  }
+}
+```
+
+**Hinweis Merge:** Wenn die Datei bereits Eintraege hat, nur die fehlenden Felder ergaenzen —
+bestehende Permissions und Hooks nicht ueberschreiben.
+
+**Verify nach Anlegen:**
+```bash
+node -e "const s=JSON.parse(require('fs').readFileSync(require('os').homedir()+'/.claude/settings.json','utf8')); console.log('autoMemory:', s.autoMemoryEnabled, '| AgentTeams:', s.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS)"
+```
+Erwartet: `autoMemory: true | AgentTeams: 1`
+
+---
+
+### 0a.2 — ~/.claude/CLAUDE.md pruefen
+
+```bash
+wc -l ~/.claude/CLAUDE.md 2>/dev/null || echo "NICHT VORHANDEN"
+```
+
+**Pruefe ob folgende Abschnitte vorhanden sind:**
+
+| Abschnitt | Pflicht | Warum |
+|-----------|---------|-------|
+| Modell-Routing (Opus/Sonnet/Haiku) | PFLICHT | Ohne Routing nutzt Claude immer dasselbe Modell — kostet 3-5x mehr |
+| Agent-Strategie (wann Team, wann Sub-Agent) | PFLICHT | Ohne Direktive arbeitet Claude immer solo |
+| Secrets-Policy | PFLICHT | Verhindert dass Claude .env-Dateien liest/ausgibt |
+| Sprache + Kommunikationsstil | Empfohlen | Einheitliches Verhalten ueber alle Projekte |
+
+**Wenn Datei fehlt oder Abschnitte fehlen → anlegen/ergaenzen:**
+
+Schreibe fehlende Abschnitte in `~/.claude/CLAUDE.md` (bestehende behalten):
+
+```markdown
+# Globale Claude Code Regeln
+# Gilt fuer ALLE Projekte auf dieser Maschine.
+# Unter 200 Zeilen halten — jede Zeile kostet bei jeder Session Tokens.
+
+## Modell-Routing (PFLICHT)
+
+| Modell | Wann verwenden |
+|--------|---------------|
+| **Opus** | Architektur-Entscheidungen, komplexe Multi-Step-Aufgaben (>5 Tasks), schwierige Bugs mit unklarer Ursache |
+| **Sonnet** | Standard-Implementierung, Code-Reviews, Ideation, normale Stories |
+| **Haiku** | Dateisuche, Recherche, Batch-Jobs, repetitive Checks, Sub-Agent-Aufgaben |
+
+## Agent-Strategie (PFLICHT)
+
+| Pattern | Wann |
+|---------|------|
+| **Solo** | Einzelne, klar abgegrenzte Aufgabe, <5 Dateien |
+| **Sub-Agent** | Exploration, Recherche, grosse Text-Mengen analysieren |
+| **Parallel-Sub-Agents** | Mehrere unabhaengige Recherchen gleichzeitig |
+| **Agent-Team** | >3 unabhaengige Komponenten die zusammenspielen muessen, Architektur-Vergleiche, Cross-Layer-Aenderungen |
+
+Agent-Team nur wenn Agents wirklich auf Zwischenergebnisse der anderen warten muessen.
+Im Zweifel: Sub-Agent statt Team (3-5x guenstiger).
+
+## Secrets-Policy (PFLICHT)
+
+// NIEMALS Secrets, API-Keys, Passwoerter oder Tokens in Code-Dateien schreiben
+// NIEMALS .env-Dateien lesen, anzeigen oder in Outputs einfuegen
+// Secrets liegen ausschliesslich in .env — niemals hardcoden oder committen
+// .env ist in .claudeignore und .gitignore eingetragen — nie davon abweichen
+
+## Arbeitsweise
+
+// Vor Code-Aenderungen immer Rueckfrage beim Operator — nie eigenmaechtig refactoren
+// Antworten kurz und direkt — keine Zusammenfassungen am Ende
+// Bash-Outputs bei Bedarf mit | head -100 begrenzen
+```
+
+**Verify nach Anlegen:**
+```bash
+wc -l ~/.claude/CLAUDE.md
+```
+Erwartet: unter 200 Zeilen.
+
+**Dem Operator mitteilen:**
+```
+~/.claude/CLAUDE.md wurde angelegt/ergaenzt. Bitte pruefe ob die Sprach-Praeferenz
+(Deutsch/Englisch) korrekt eingetragen ist — und ergaenze deinen persoenlichen
+Arbeitsstil wenn gewuenscht. Datei unter 200 Zeilen halten.
+```
+
+Warte auf Bestaetigung "Global Settings OK", dann weiter mit Phase 0.
+
+---
+
 ## Phase 0: Info-Gathering — HUMAN-IN-THE-LOOP
 
 **Lies zuerst** `references/info-gathering.md` fuer die vollstaendige Liste.
@@ -367,20 +501,23 @@ Aus `references/file-templates.md` mit Operator-Angaben befuellen:
 
 **Immer anlegen (stack-unabhaengig):**
 
-| Datei | Template-Sektion |
-|-------|-----------------|
-| `lib/config.js` | config.js |
-| `CLAUDE.md` | CLAUDE.md |
-| `ARCHITECTURE_DESIGN.md` | architecture-design-template.md |
-| `SYSTEM_ARCHITECTURE.md` | SYSTEM_ARCHITECTURE.md |
-| `COMPONENT_INVENTORY.md` | COMPONENT_INVENTORY.md |
-| `.env.example` | .env.example |
-| `CHANGELOG.md` | CHANGELOG.md |
-| `API_INVENTORY.md` | API_INVENTORY.md |
-| `INDEX.md` | INDEX.md |
-| `PROCESS_CATALOG.md` | PROCESS_CATALOG.md |
-| `specs/TEMPLATE.md` | specs-template |
-| `sonar-project.properties` | sonar-project.properties |
+| Datei | Template-Sektion | Hinweis |
+|-------|-----------------|---------|
+| `lib/config.js` | config.js | |
+| `CLAUDE.md` | CLAUDE.md | Projekt-Regeln — unter 200 Zeilen halten |
+| `CLAUDE.local.md` | — | Persoenliche Overrides, in .gitignore (1.4c) |
+| `.claudeignore` | .claudeignore | Pflicht — Kontextschutz (1.4b) |
+| `ARCHITECTURE_DESIGN.md` | architecture-design-template.md | |
+| `SYSTEM_ARCHITECTURE.md` | SYSTEM_ARCHITECTURE.md | |
+| `COMPONENT_INVENTORY.md` | COMPONENT_INVENTORY.md | |
+| `.env.example` | .env.example | Mit Format-Erklaerungen |
+| `CHANGELOG.md` | CHANGELOG.md | |
+| `API_INVENTORY.md` | API_INVENTORY.md | |
+| `INDEX.md` | INDEX.md | |
+| `PROCESS_CATALOG.md` | PROCESS_CATALOG.md | |
+| `specs/TEMPLATE.md` | specs-template | |
+| `sonar-project.properties` | sonar-project.properties | |
+| `.claude/rules/agent-patterns.md` | agent-patterns.md | Lazy Loading — nur bei Bedarf geladen |
 
 **Stack-abhaengige Tooling-Dateien (basierend auf {{STACK}} aus Phase 0.1):**
 
@@ -503,17 +640,186 @@ EOF
 chmod +x {PROJECT_PATH}/.claude/hooks/doc-version-sync.sh
 ```
 
-**Hooks in `.claude/settings.json` registrieren:**
+**Hooks in `.claude/settings.json` registrieren** (vollstaendige settings.json — ersetzt leeres Skelett):
+
 ```json
 {
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(node *)",
+      "Bash(npm *)",
+      "mcp__claude_ai_Linear__save_issue",
+      "mcp__claude_ai_Linear__list_issues",
+      "mcp__claude_ai_Linear__save_comment",
+      "mcp__claude_ai_Linear__get_issue",
+      "mcp__claude_ai_Linear__get_team",
+      "mcp__claude_ai_Linear__list_projects"
+    ]
+  },
   "hooks": {
-    "PreToolUse": [],
-    "PostToolUse": []
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/spec-gate.sh" },
+          { "type": "command", "command": "bash .claude/hooks/doc-version-sync.sh" },
+          { "type": "command", "command": "bash .claude/hooks/guard.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/format.sh" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "echo 'Session beendet — /wrap-up nicht vergessen!'" }
+        ]
+      }
+    ]
   }
 }
 ```
 
-Dem Operator mitteilen: "Hooks sind angelegt. Aktivierung via `.claude/settings.json` oder manuell."
+**guard.sh anlegen** — verhindert dass Claude .env-Dateien liest oder loescht:
+
+```bash
+cat > {PROJECT_PATH}/.claude/hooks/guard.sh << 'EOF'
+#!/bin/bash
+# guard.sh — Schutzt sensitive Dateien vor Claude-Zugriff
+INPUT="$TOOL_INPUT"
+BLOCKED_PATTERNS=(".env" "*.pem" "*.key" "id_rsa" "id_ed25519")
+for pattern in "${BLOCKED_PATTERNS[@]}"; do
+  if echo "$INPUT" | grep -q "$pattern"; then
+    echo "BLOCKED: Zugriff auf sensitive Datei ($pattern) verweigert." >&2
+    exit 1
+  fi
+done
+exit 0
+EOF
+chmod +x {PROJECT_PATH}/.claude/hooks/guard.sh
+```
+
+**format.sh anlegen** — Auto-Format nach Edit/Write (stack-abhaengig):
+
+```bash
+cat > {PROJECT_PATH}/.claude/hooks/format.sh << 'EOF'
+#!/bin/bash
+# format.sh — Auto-Formatter nach Edit/Write
+# Anpassen je nach Stack (Biome, Prettier, Black)
+FILEPATH="$TOOL_RESULT_FILE"
+if [ -z "$FILEPATH" ]; then exit 0; fi
+# Node.js/JS: Biome
+if command -v biome &>/dev/null; then
+  biome format --write "$FILEPATH" 2>/dev/null
+# Python: Black
+elif command -v black &>/dev/null && [[ "$FILEPATH" == *.py ]]; then
+  black "$FILEPATH" 2>/dev/null
+fi
+exit 0
+EOF
+chmod +x {PROJECT_PATH}/.claude/hooks/format.sh
+```
+
+Dem Operator mitteilen: "Hooks sind angelegt und in settings.json aktiv."
+
+### 1.4b .claudeignore anlegen
+
+**Pflicht — ohne .claudeignore liest Claude node_modules (100'000+ Dateien = 30-40% Kontextfenster).**
+
+```bash
+cat > {PROJECT_PATH}/.claudeignore << 'EOF'
+# Build-Artefakte
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets (Claude darf diese nie lesen)
+.env
+.env.*
+*.pem
+*.key
+
+# Logs + Daten
+*.log
+*.jsonl
+data/*.db
+data/*.sqlite
+
+# IDE + System
+.DS_Store
+.idea/
+.vscode/settings.json
+*.lock
+coverage/
+
+# Grosse generierte Dateien
+package-lock.json
+yarn.lock
+EOF
+```
+
+**Verify:**
+```bash
+cat {PROJECT_PATH}/.claudeignore | grep ".env"
+# Erwartet: .env und .env.* sind eingetragen
+```
+
+### 1.4c CLAUDE.local.md anlegen
+
+Persoenliche Overrides die nicht ins Repo gehoeren (in `.gitignore` eintragen):
+
+```bash
+cat > {PROJECT_PATH}/CLAUDE.local.md << 'EOF'
+# Meine lokalen Einstellungen — wird NICHT ins Git committet
+
+## Meine Rolle
+// [Bitte ausfuellen: z.B. "Ich bin der alleinige Entwickler"]
+
+## Lokale Umgebung
+// [Bitte ausfuellen: z.B. "API-Server laeuft auf http://localhost:3000"]
+
+## Persoenlicher Stil
+// [Optional: z.B. "Erklaere Backend-Konzepte ausfuehrlicher"]
+EOF
+```
+
+Dem Operator mitteilen:
+```
+CLAUDE.local.md wurde angelegt. Bitte fuell sie mit deinen persoenlichen
+Einstellungen — sie wird nie ins Git committet und gilt nur fuer dich.
+```
+
+In `.gitignore` eintragen:
+```bash
+echo "CLAUDE.local.md" >> {PROJECT_PATH}/.gitignore
+```
+
+### 1.4d Agent-Patterns als .claude/rules/ auslagern
+
+```bash
+mkdir -p {PROJECT_PATH}/.claude/rules
+cp {bootstrap-path}/references/agent-patterns.md {PROJECT_PATH}/.claude/rules/agent-patterns.md
+```
+
+Eintrag in CLAUDE.md ergaenzen (nach Agent-Routing Abschnitt):
+```markdown
+**Konkrete Team-Patterns:** `.claude/rules/agent-patterns.md` — wird nur bei Bedarf geladen.
+```
+
+**Warum auslagern:** Die Patterns belasten das Kontextfenster nicht dauerhaft — Claude
+zieht sie nur wenn Agent-Koordination ansteht (Lazy Loading).
 
 ### 1.5 Linear Labels einrichten
 
@@ -1058,6 +1364,7 @@ Dieser Skill ist **vollstaendig portabel** — keine externen Dateisystem-Abhaen
 | MCP-Setup Anleitung | `references/mcp-setup.md` (eingebettet) |
 | Telegram Bot Setup + Linear-Webhook | `references/telegram-setup.md` (eingebettet) |
 | Grafana Monitoring Pattern | `references/grafana-monitoring.md` (eingebettet) |
+| Agent-Patterns (4 Team-Patterns) | `references/agent-patterns.md` (eingebettet) |
 | Skill-Referenzen (ideation etc.) | Separat installieren oder von GitHub |
 
 Um diesen Skill auf einer neuen Maschine zu verwenden:
