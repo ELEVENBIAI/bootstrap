@@ -178,12 +178,23 @@ Wenn die Website keinen Dark Mode hat, intelligent ableiten:
 - Surfaces → etwas heller als Background
 - Akzentfarben bleiben gleich
 
-### 5. Ausgabe
+### 5. Ausgabe — Speicherort erfragen (IMMER vor dem Schreiben)
 
-Drei Dateien im gleichen Verzeichnis speichern:
-- `DESIGN.md` — Das Design-System-Dokument
-- `preview.html` — Visueller Katalog (Light Mode)
-- `preview-dark.html` — Visueller Katalog (Dark Mode)
+Bevor die Dateien geschrieben werden, den Nutzer fragen:
+
+```
+Ich habe drei Dateien vorbereitet:
+- DESIGN.md — Das Design-System-Dokument
+- preview.html — Visueller Katalog (Light Mode)
+- preview-dark.html — Visueller Katalog (Dark Mode)
+
+Wo soll ich sie ablegen?
+(1) Im aktuellen Verzeichnis
+(2) In einem bestimmten Ordner — nenne mir den Pfad
+(3) Auf dem Desktop zum schnellen Zugriff
+```
+
+Erst nach Antwort die Dateien in das gewaehlte Verzeichnis schreiben.
 
 ## Qualitaetsregeln
 
