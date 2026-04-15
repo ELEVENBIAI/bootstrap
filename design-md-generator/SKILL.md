@@ -6,7 +6,7 @@ description: |
   Design-System extrahieren, eine DESIGN.md erstellen oder das visuelle Design dokumentieren
   moechte. Ausloeser: "erstelle eine DESIGN.md", "extrahiere das Design von...",
   "design system aus website", "DESIGN.md fuer...", "design md".
-version: 1.3.0
+version: 1.4.0
 ---
 
 # DESIGN.md Generator
@@ -21,9 +21,10 @@ Format-Referenz: Siehe [references/design-md-format.md](references/design-md-for
 
 ### 0. Quellen erfragen (IMMER zuerst)
 
-Bevor mit der Analyse begonnen wird, den Nutzer fragen:
+Bevor mit der Analyse begonnen wird, den Nutzer in zwei Schritten fragen:
 
-**Pflichtfrage:** "Hast du einen Design Guide, Style Guide oder Brand Manual (PDF, DOCX, PPTX)
+**Frage 1 — Design-Grundlage:**
+"Hast du einen Design Guide, Style Guide oder Brand Manual (PDF, DOCX, PPTX)
 den ich mit einbeziehen soll? Damit wird die DESIGN.md deutlich vollstaendiger."
 
 Moegliche Antworten und Reaktion:
@@ -31,13 +32,28 @@ Moegliche Antworten und Reaktion:
 - **"Nein, nur die Website"** → Direkt zu Schritt 1a
 - **"Ich habe ein CI-Profil JSON"** → JSON einlesen, dann Website analysieren
 
-Drei Input-Quellen die der Skill unterstuetzt:
+**Frage 2 — Zusaetzliche Brand-Dokumente (IMMER fragen, unabhaengig von Frage 1):**
+"Hast du zusaetzliche Dokumente zur Marke — zum Beispiel Brand Guidelines mit Brand Story,
+Archetypen-Beschreibungen oder Tonalitaets-Richtlinien? Die fliessen in Abschnitt 1
+(Visual Theme & Atmosphere) und Abschnitt 7 (Do's and Don'ts) ein und machen das
+Design-System vollstaendiger."
+
+Moegliche Antworten und Reaktion:
+- **"Ja, hier sind die Dateien"** → Dokumente lesen, relevante Inhalte extrahieren:
+  Brand Story → Abschnitt 1 (Design-Philosophie und Persoenlichkeit)
+  Archetypen → Abschnitt 1 (Key Characteristics) + Abschnitt 9 (Agent Prompt Guide)
+  Tonalitaet → Abschnitt 7 (Do's and Don'ts fuer Bildsprache und Stimmung)
+- **"Nein"** → Weiter ohne. Kein Nachteil, DESIGN.md funktioniert auch rein technisch.
+
+Fuenf Input-Quellen die der Skill unterstuetzt:
 
 | Quelle | Was sie liefert | Tool |
 |--------|----------------|------|
 | Website-URL | Tatsaechlich verwendete CSS-Werte | defuddle / WebFetch |
 | Style Guide (PDF/DOCX/PPTX) | Offizielle Regeln, Farbnamen, Do's/Don'ts | PDF-Skill / Read |
 | CI-Profil JSON | Bereits extrahierte Farben/Fonts | ci-extraktor Output |
+| Brand Guidelines / Brand Story | Persoenlichkeit, Werte, Positionierung | PDF-Skill / Read |
+| Archetyp- / Tonalitaets-Dokumente | Markenstimme, Bildsprache-Regeln | PDF-Skill / Read |
 
 ### 1a. Website laden und analysieren
 
@@ -195,6 +211,57 @@ Wo soll ich sie ablegen?
 ```
 
 Erst nach Antwort die Dateien in das gewaehlte Verzeichnis schreiben.
+
+### 6. Optionaler Style Guide als PDF (IMMER anbieten)
+
+Nach dem Speichern der drei Kerndateien den Nutzer fragen:
+
+```
+Moechtest du zusaetzlich einen Style Guide als PDF haben?
+Der wird in den Farben und Schriften der Marke erstellt — individuell,
+kein generisches Template.
+
+(ja/nein)
+```
+
+Bei **"nein"**: Skill ist fertig. Zusammenfassung zeigen und beenden.
+
+Bei **"ja"**: Style Guide als PPTX erstellen (via PPTX-Skill), dann als PDF exportieren.
+
+**Aufbau des Style Guides (6-8 Slides):**
+
+Das gesamte Slide-Deck wird in den extrahierten Markenfarben und -schriften gestaltet.
+Kein festes Template — alles wird dynamisch aus der DESIGN.md erzeugt.
+
+| Slide | Inhalt | Datenquelle aus DESIGN.md |
+|-------|--------|--------------------------|
+| 1. Cover | Markenname, "Style Guide", Datum | Abschnitt 1 (Name), Markenfarben als Hintergrund-Gradient |
+| 2. Inhaltsverzeichnis | Kapiteluebersicht | Automatisch aus den folgenden Slides |
+| 3. Farbpalette | Farb-Swatches mit Hex, RGB, Farbname und Verwendungszweck | Abschnitt 2 (Color Palette & Roles) |
+| 4. Typografie | Font-Specimens ("Aa") gross dargestellt, Hierarchie-Tabelle, Schriftschnitte | Abschnitt 3 (Typography Rules) |
+| 5. Komponenten | Button-Styles, Card-Styles als visuelle Beispiele | Abschnitt 4 (Component Stylings) |
+| 6. Layout & Spacing | Spacing-Scale, Border-Radius-Scale, Grid-Prinzipien | Abschnitt 5 (Layout Principles) |
+| 7. Do's and Don'ts | Zweispaltig: Do's links, Don'ts rechts | Abschnitt 7 (Do's and Don'ts) |
+| 8. Schlussseite | Logo/Markenname, Copyright, Datum | Abschnitt 1 |
+
+**Zusaetzliche Slides wenn Brand-Dokumente vorhanden sind (aus Schritt 0, Frage 2):**
+
+| Slide | Inhalt | Datenquelle |
+|-------|--------|-------------|
+| Nach Slide 2 | Brand Story / Markenpersoenlichkeit | Brand Guidelines Dokument |
+| Nach Slide 2 | Tonalitaet & Bildsprache | Archetyp-/Tonalitaets-Dokument |
+
+**Design-Regeln fuer den Style Guide:**
+- Hintergrundfarbe: Hellster Neutral-Wert der Marke (oder Weiss)
+- Akzentfarbe fuer Ueberschriften und Linien: Primary Color der Marke
+- Headings: Heading-Font der Marke
+- Bodytext: Body-Font der Marke
+- Farb-Swatches als Rechtecke mit abgerundeten Ecken (Border-Radius aus DESIGN.md)
+- Kein Wasserzeichen, kein "Generated by" — das ist ein professionelles Kundendokument
+
+**Ausgabe:**
+- `styleguide-[markenname].pptx` — PowerPoint-Datei
+- Im gleichen Verzeichnis wie die anderen drei Dateien speichern
 
 ## Qualitaetsregeln
 

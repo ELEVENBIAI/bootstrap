@@ -26,6 +26,8 @@
 - **DESIGN.md Generierung:** 9 Abschnitte nach Google-Stitch-Format (Visual Theme, Colors, Typography, Components, Layout, Depth, Do's/Don'ts, Responsive, Agent Prompt Guide)
 - **HTML-Previews:** Generiert `preview.html` (Light) und `preview-dark.html` (Dark) als visuellen Design-Katalog
 - **Screenshot-Analyse:** Optionale visuelle Analyse per Claude Preview fuer Atmosphaere und Gesamteindruck
+- **Brand-Dokumente:** Optionale Einbindung von Brand Story, Archetypen, Tonalitaets-Richtlinien fuer reichere Design-Dokumentation
+- **Style Guide PDF:** Optionaler Export als professionelles Style-Guide-Dokument (PPTX) in den Farben und Schriften der Marke — kein Template, individuell generiert
 
 ---
 
@@ -45,13 +47,16 @@ Oder natuerliche Sprache:
 
 ### Typischer Ablauf
 
-1. **Skill fragt nach Quellen:** Website-URL und optional Style Guide (PDF/DOCX)
-2. **Analyse laeuft:** Website-CSS wird extrahiert, Style Guide wird gelesen
-3. **Tokens werden zusammengefuehrt:** Farben, Fonts, Spacing, Shadows, Components
-4. **Drei Dateien werden erstellt:**
+1. **Skill fragt nach Design-Quellen:** Website-URL und optional Style Guide (PDF/DOCX)
+2. **Skill fragt nach Brand-Dokumenten:** Brand Story, Archetypen, Tonalitaet (optional)
+3. **Analyse laeuft:** Website-CSS wird extrahiert, Dokumente werden gelesen
+4. **Tokens werden zusammengefuehrt:** Farben, Fonts, Spacing, Shadows, Components
+5. **Speicherort wird erfragt:** Aktuelles Verzeichnis, eigener Pfad oder Desktop
+6. **Drei Kerndateien werden erstellt:**
    - `DESIGN.md` — Das Design-System-Dokument
    - `preview.html` — Visueller Katalog (Light Mode)
    - `preview-dark.html` — Visueller Katalog (Dark Mode)
+7. **Optional: Style Guide als PDF** — Professionelles Markendokument in den Farben und Schriften der Marke (via PPTX-Skill)
 
 ### Beispiel 1: Nur Website
 
@@ -124,4 +129,4 @@ Die Kombination aus Website-Analyse und Style-Guide-Analyse schliesst eine Lueck
 
 ---
 
-**Version:** 1.3.0 | **Skill-Name:** `design-md-generator`
+**Version:** 1.4.0 | **Skill-Name:** `design-md-generator`
