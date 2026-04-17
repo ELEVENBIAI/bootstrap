@@ -258,9 +258,9 @@ Claude now walks you through 14 questions (about 5 minutes) and then builds ever
 
 ## 5. The Bootstrap Process
 
-![Bootstrap Skill — 5-Phase Overview](bootstrap-big-picture.png)
+![Bootstrap Skill — 5-Phase Overview](bootstrap-big-picture.en.png)
 
-*From empty folder to governance-ready project in 5 guided phases — governance hooks, skill set, self-healing monitor, and global registry entry included. ([Excalidraw source](bootstrap/docs/bootstrap-big-picture.excalidraw))*
+*From empty folder to governance-ready project in 5 guided phases — governance hooks, skill set, self-healing monitor, and global registry entry included. ([Excalidraw source](bootstrap/docs/bootstrap-big-picture.en.excalidraw))*
 
 ### Phase 0: Questions & answers (you + Claude)
 
@@ -376,23 +376,23 @@ Every skill in this handbook has its own README with a visual overview:
 
 | Skill | README + Sketch |
 |-------|-----------------|
-| bootstrap | [README](bootstrap/README.md) · [Sketch](bootstrap/docs/bootstrap-big-picture.png) |
-| ideation | [README](ideation/README.md) · [Sketch](ideation/overview.png) |
-| implement | [README](implement/README.md) · [Sketch](implement/overview.png) |
-| backlog | [README](backlog/README.md) · [Sketch](backlog/overview.png) |
-| architecture-review | [README](architecture-review/README.md) · [Sketch](architecture-review/overview.png) |
-| sprint-review | [README](sprint-review/README.md) · [Sketch](sprint-review/overview.png) |
-| research | [README](research/README.md) · [Sketch](research/overview.png) |
-| security-architect | [README](security-architect/README.md) · [Sketch](security-architect/overview.png) |
-| grafana | [README](grafana/README.md) · [Sketch](grafana/overview.png) |
-| cloud-system-engineer | [README](cloud-system-engineer/README.md) · [Sketch](cloud-system-engineer/overview.png) |
-| visualize | [README](visualize/README.md) · [Sketch](visualize/overview.png) |
-| skill-creator | [README](skill-creator/README.md) · [Sketch](skill-creator/overview.png) |
-| design-md-generator | [README](design-md-generator/README.md) · [Sketch](design-md-generator/overview.png) |
+| bootstrap | [README](bootstrap/README.md) · [Sketch](bootstrap/docs/bootstrap-big-picture.en.png) |
+| ideation | [README](ideation/README.md) · [Sketch](ideation/overview.en.png) |
+| implement | [README](implement/README.md) · [Sketch](implement/overview.en.png) |
+| backlog | [README](backlog/README.md) · [Sketch](backlog/overview.en.png) |
+| architecture-review | [README](architecture-review/README.md) · [Sketch](architecture-review/overview.en.png) |
+| sprint-review | [README](sprint-review/README.md) · [Sketch](sprint-review/overview.en.png) |
+| research | [README](research/README.md) · [Sketch](research/overview.en.png) |
+| security-architect | [README](security-architect/README.md) · [Sketch](security-architect/overview.en.png) |
+| grafana | [README](grafana/README.md) · [Sketch](grafana/overview.en.png) |
+| cloud-system-engineer | [README](cloud-system-engineer/README.md) · [Sketch](cloud-system-engineer/overview.en.png) |
+| visualize | [README](visualize/README.md) · [Sketch](visualize/overview.en.png) |
+| skill-creator | [README](skill-creator/README.md) · [Sketch](skill-creator/overview.en.png) |
+| design-md-generator | [README](design-md-generator/README.md) · [Sketch](design-md-generator/overview.en.png) |
 
 ### `/ideation` — From idea to story
 
-![Ideation Skill](ideation/overview.png)
+![Ideation Skill](ideation/overview.en.png)
 
 **When:** You have an idea for a new feature.
 
@@ -418,7 +418,7 @@ You: "I want customers to be able to track their orders"
 
 ### `/implement` — From story to code
 
-![Implement Skill](implement/overview.png)
+![Implement Skill](implement/overview.en.png)
 
 **When:** You want to implement a story.
 
@@ -438,7 +438,7 @@ You: "I want customers to be able to track their orders"
 
 ### `/backlog` — Sprint planning
 
-![Backlog Skill](backlog/overview.png)
+![Backlog Skill](backlog/overview.en.png)
 
 **When:** You don't know what's most important next.
 
@@ -463,7 +463,7 @@ You: "I want customers to be able to track their orders"
 
 ### `/architecture-review` — System health
 
-![Architecture Review Skill](architecture-review/overview.png)
+![Architecture Review Skill](architecture-review/overview.en.png)
 
 **When:** Before a big decision. Periodically (monthly).
 
@@ -472,7 +472,7 @@ Security, Performance, Observability, Maintainability, Cost Efficiency, Signal Q
 
 ### `/research` — Deep research
 
-![Research Skill](research/overview.png)
+![Research Skill](research/overview.en.png)
 
 **When:** You need facts for a technical decision.
 
@@ -483,7 +483,7 @@ Security, Performance, Observability, Maintainability, Cost Efficiency, Signal Q
 
 ### `/sprint-review` — Quarterly audit
 
-![Sprint Review Skill](sprint-review/overview.png)
+![Sprint Review Skill](sprint-review/overview.en.png)
 
 **When:** Every 4–6 weeks.
 
@@ -495,7 +495,7 @@ Security, Performance, Observability, Maintainability, Cost Efficiency, Signal Q
 
 ### `/security-architect` — Security by design
 
-![Security Architect Skill](security-architect/overview.png)
+![Security Architect Skill](security-architect/overview.en.png)
 
 **When:** Automatically — during planning (DESIGN mode), code changes (REVIEW mode),
 audits (AUDIT mode), and before installing external skills (SKILL-SCAN mode).
@@ -526,9 +526,9 @@ that together give you traceable, reproducible, AI-friendly development.
 
 ### The 5 artifact groups
 
-![Artifact Map — all artifacts at a glance](bootstrap/docs/artifact-map.png)
+![Artifact Map — all artifacts at a glance](bootstrap/docs/artifact-map.en.png)
 
-*The full artifact map: every governance file, hook, spec, and automation that bootstrap creates — grouped into 5 categories, with arrows showing which skill consumes which artifact. ([Excalidraw source](bootstrap/docs/artifact-map.excalidraw))*
+*The full artifact map: every governance file, hook, spec, and automation that bootstrap creates — grouped into 5 categories, with arrows showing which skill consumes which artifact. ([Excalidraw source](bootstrap/docs/artifact-map.en.excalidraw))*
 
 #### Group A — Governance documentation
 
@@ -639,7 +639,7 @@ This structure is not negotiable — the spec-gate hook enforces the file's exis
 
 ### Which skill writes/reads which artifact?
 
-The [Artifact Map](bootstrap/docs/artifact-map.png) above shows the full matrix visually.
+The [Artifact Map](bootstrap/docs/artifact-map.en.png) above shows the full matrix visually.
 Quick summary:
 
 - **`/ideation`** writes: Linear issue, ADD section, spec placeholder. Reads: ARCHITECTURE_DESIGN.md, STRATEGY_LOG.md
@@ -841,9 +841,9 @@ With `/skill-creator` you can build project-specific workflows:
 
 ## 11. Daily Usage — A Typical Workflow
 
-![A typical workday](docs/daily-workflow.png)
+![A typical workday](docs/daily-workflow.en.png)
 
-*Morning · feature · bugfix · end of week — skills in action. ([Excalidraw source](docs/daily-workflow.excalidraw))*
+*Morning · feature · bugfix · end of week — skills in action. ([Excalidraw source](docs/daily-workflow.en.excalidraw))*
 
 ### Morning: what's on?
 

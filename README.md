@@ -24,7 +24,7 @@ Every skill in this repository solves a real problem that emerged while building
 
 ## System Overview
 
-![Bootstrap Skill — 5-Phase Workflow](bootstrap-big-picture.png)
+![Bootstrap Skill — 5-Phase Workflow](bootstrap-big-picture.en.png)
 
 *From empty folder to governance-ready project in 5 guided phases — Git hooks, skill set, self-healing monitor and global registry entry included.*
 

@@ -15,11 +15,11 @@
 
 ## Big Picture
 
-![Bootstrap Skill — 5-Phase Overview](docs/bootstrap-big-picture.png)
+![Bootstrap Skill — 5-Phase Overview](docs/bootstrap-big-picture.en.png)
 
-*5 phases from empty folder to governance-ready project — with governance hooks, skill set, self-healing monitor, and global registry entry included. [Excalidraw source](docs/bootstrap-big-picture.excalidraw)*
+*5 phases from empty folder to governance-ready project — with governance hooks, skill set, self-healing monitor, and global registry entry included. [Excalidraw source](docs/bootstrap-big-picture.en.excalidraw)*
 
-**Also available:** [Artifact Map](docs/artifact-map.excalidraw) — visual map of every artifact bootstrap creates (governance files, hooks, specs, self-healing, skills) and how they interact.
+**Also available:** [Artifact Map](docs/artifact-map.en.excalidraw) — visual map of every artifact bootstrap creates (governance files, hooks, specs, self-healing, skills) and how they interact.
 
 ---
 
@@ -152,7 +152,7 @@ my-project/
     └── skills/                         ← Linked based on selected skill tier
 ```
 
-For the full map of artifacts and how they interconnect, see the [Artifact Map](docs/artifact-map.excalidraw) (PNG: [docs/artifact-map.png](docs/artifact-map.png)).
+For the full map of artifacts and how they interconnect, see the [Artifact Map](docs/artifact-map.en.excalidraw) (PNG: [docs/artifact-map.en.png](docs/artifact-map.en.png)).
 
 ---
 
