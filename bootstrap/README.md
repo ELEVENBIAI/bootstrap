@@ -15,9 +15,9 @@
 
 ## Big Picture
 
-![Bootstrap Skill — 5-Phase Overview](docs/bootstrap-big-picture.en.png)
+![Bootstrap Skill — Interview-Block flow (A–D) + setup phases (0, 4, 5, 7)](docs/bootstrap-big-picture.en.png)
 
-*5 phases from empty folder to governance-ready project — with governance hooks, skill set, self-healing monitor, and global registry entry included. [Excalidraw source](docs/bootstrap-big-picture.en.excalidraw)*
+*Four interview blocks (A–D) frame the decisions, four setup phases (0, 4, 5, 7) execute them. Block D activates optional components only on demand. A dedicated Learning-Loop cycle (`/sprint-review` → `journal/learnings.md` → `/ideation`) makes the framework smarter with every sprint. [Excalidraw source](docs/bootstrap-big-picture.en.excalidraw)*
 
 **Also available:** [Artifact Map](docs/artifact-map.en.excalidraw) — visual map of every artifact bootstrap creates (governance files, hooks, specs, self-healing, skills) and how they interact.
 
@@ -88,14 +88,14 @@ Every change is:
 
 ### On an existing Claude Code system
 ```bash
-cp -r bootstrap/ /root/.claude/skills/bootstrap/
+cp -r bootstrap/ ~/.claude/skills/bootstrap/
 # Then in Claude Code: /bootstrap
 ```
 
-### On a fresh server (portable mode)
+### On a fresh machine (portable mode)
 ```bash
-mkdir -p /root/.claude/skills/
-cp -r bootstrap/ /root/.claude/skills/bootstrap/
+mkdir -p ~/.claude/skills/
+cp -r bootstrap/ ~/.claude/skills/bootstrap/
 claude
 # /bootstrap
 ```
@@ -269,9 +269,9 @@ Skills repo: [github.com/vibercoder79/KI-Masterclass-Koerting-](https://github.c
 
 ## Big Picture
 
-![Bootstrap Skill — 5-Phasen-Übersicht](docs/bootstrap-big-picture.png)
+![Bootstrap Skill — Interview-Block-Flow (A–D) + Setup-Phasen (0, 4, 5, 7)](docs/bootstrap-big-picture.png)
 
-*5 Phasen vom leeren Ordner zum governance-ready Projekt — mit Governance-Hooks, Skill-Set, Self-Healing-Monitor und globalem Registry-Eintrag. [Excalidraw-Quelldatei](docs/bootstrap-big-picture.excalidraw)*
+*Vier Interview-Blöcke (A–D) umrahmen die Entscheidungen, vier Setup-Phasen (0, 4, 5, 7) setzen sie um. Block D aktiviert optionale Komponenten nur auf Wunsch. Ein eigener Learning-Loop-Kreislauf (`/sprint-review` → `journal/learnings.md` → `/ideation`) macht das Framework mit jedem Sprint klüger. [Excalidraw-Quelldatei](docs/bootstrap-big-picture.excalidraw)*
 
 ---
 
@@ -359,7 +359,7 @@ Solo-Entwickler oder kleines Team ohne dediziertes Ops kann damit zuverlässig p
 **5. Portabel — ein Ordner, null Dependencies**
 
 ```bash
-cp -r bootstrap/ /root/.claude/skills/bootstrap/
+cp -r bootstrap/ ~/.claude/skills/bootstrap/
 # Fertig. Keine pip install, keine npm, keine Cloud-Abhängigkeiten.
 ```
 Läuft auf Mac, VPS, Claude Code Desktop — überall gleich.
@@ -464,7 +464,7 @@ flowchart LR
 
 ```bash
 # Bootstrap Skill in das Claude Code Skills-Verzeichnis kopieren
-cp -r bootstrap/ /root/.claude/skills/bootstrap/
+cp -r bootstrap/ ~/.claude/skills/bootstrap/
 
 # Claude Code in einem beliebigen Verzeichnis starten und eingeben:
 # /bootstrap
@@ -476,7 +476,7 @@ cp -r bootstrap/ /root/.claude/skills/bootstrap/
 # 1. Claude Code installieren
 # 2. Diesen Ordner in das Skills-Verzeichnis kopieren
 mkdir -p /root/.claude/skills/
-cp -r bootstrap/ /root/.claude/skills/bootstrap/
+cp -r bootstrap/ ~/.claude/skills/bootstrap/
 
 # 3. Claude Code öffnen
 claude
@@ -490,35 +490,31 @@ Keine Abhängigkeiten auf andere Dateien. Alle Templates sind in `references/` e
 
 ## Was du vorher brauchst
 
-### Phase 0a — Wird automatisch geprüft und eingerichtet
+### Bereithalten — was Bootstrap dich im Interview fragt
 
-Bootstrap prüft vor dem eigentlichen Setup ob deine globale Claude Code Konfiguration stimmt und richtet sie bei Bedarf ein:
-
-| Was | Datei | Prüft/Setzt |
-|-----|-------|------------|
-| **Auto-Memory** | `~/.claude/settings.json` | `autoMemoryEnabled: true` — Claude speichert Session-Erkenntnisse |
-| **Agent Teams** | `~/.claude/settings.json` | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: "1"` — parallele Agents aktiviert |
-| **Modell-Routing** | `~/.claude/CLAUDE.md` | Opus/Sonnet/Haiku je Task-Typ — spart systematisch Kosten |
-| **Agent-Strategie** | `~/.claude/CLAUDE.md` | Wann Solo, Sub-Agent, Agent-Team — verhindert unnötige 3-5× Kosten |
-| **Secrets-Policy** | `~/.claude/CLAUDE.md` | Claude liest niemals `.env`-Dateien — API-Key-Schutz |
-
-> Diese Einstellungen gelten für **alle Projekte** auf der Maschine — einmalig, nie wieder anfassen.
-
-### Phase 0 — Claude fragt dich nach diesen Infos
-
-**Pflichtangaben:**
-- Projektname & Ein-Satz-Beschreibung
+**Block A (Projekt-Kern, 7 Fragen):**
+- Stack (Node.js / Frontend / Full-Stack / Python / Anderes)
+- Projektname + Ein-Satz-Beschreibung
 - Absoluter Pfad zum Projektverzeichnis
-- GitHub Repository URL
-- Linear Team-Name (Slug) + Issue-Präfix (z.B. `PROJ-`)
+- Backlog-Tool (`linear` / `github-issues` / `none`) + Issue-Präfix (z.B. `PROJ-`)
 - Startversion (z.B. `1.0.0`)
-- Obsidian Vault-Pfad (für Doc-Sync) — lokal oder VPS (Bootstrap erklärt den Unterschied)
+- Architektur-Add-ons: Privacy / Cost / Signal / Compliance (beliebige Kombination, auch keine)
 
-**Optional:**
-- Telegram Bot Token (für Self-Healing Alerts — vollständige Einrichtungsanleitung folgt in Phase 3)
-- OpenRouter/Perplexity API Key (für `/research` Skill Deep-Tier)
+**Block B (Bestehende Infrastruktur, 5 Fragen):**
+- GitHub-Repo vorhanden? (URL oder "neu anlegen")
+- Obsidian-Vault im Einsatz? (Pfad oder "nein")
+- Backlog-Tool schon konfiguriert?
+- `.env` schon da?
+- `CLAUDE.md` schon da? (mergen oder überschreiben)
+
+**Block C (Doku-Architektur):** Bootstrap schlägt 3 Schichten + Hub vor — du bestätigst oder passt an.
+
+**Block D (Optional-Komponenten, am Ende):** 4 Ja/Nein-Fragen (Self-Healing / DocSync / Automation-Daemon / Learning-Loop L1/L2/L3).
+
+**Optionale API-Keys (kannst du auch später nachtragen):**
+- Telegram Bot Token (für Self-Healing Alerts)
+- OpenRouter/Perplexity API Key (für `/research` Deep-Tier)
 - Grafana Cloud URL + API Key (für Monitoring-Dashboards)
-- Miro Board URL (für `/visualize` Skill)
 
 ---
 
@@ -588,17 +584,20 @@ Der Bootstrap ist in **4 Interview-Bloecken (A-D)** plus **Execution-Phasen (4-7
 
 ```mermaid
 flowchart LR
-    PF["🔍 Pre-Flight\nSSH · Node.js\nObsidian-Modus"]
-    P0A["⚙️ Phase 0a\nGlobal Settings\nautoMemory · AgentTeams\nModell-Routing · Secrets"]
-    P0["📋 Phase 0\nInfo-Gathering\nStack + 14 Fragen"]
-    P1["🏗️ Phase 1\nGrundstruktur\nDateien · Git · Hooks\n.claudeignore · Agent-Patterns"]
-    P2["🛠️ Phase 2\nMCP + Skills\nLinear · Telegram · Grafana"]
-    P3["🔄 Phase 3\nSelf-Healing\nCron · Log-Rotation\nReboot-Persistenz"]
-    P4["⚡ Phase 4\nDaemon\noptional"]
-    P5["🌐 Phase 5\nRegistry\n+ Smoke-Test"]
-    DONE["🚀 Bereit für\n/ideation"]
+    P0["📋 Phase 0\nBriefing\nFlow ankuendigen"]
+    BA["🅰️ Block A\nProjekt-Kern\nStack + 7 Fragen\n+ Add-ons"]
+    BB["🅱️ Block B\nBestehende Infra\nGitHub · Obsidian\nBacklog · Env"]
+    BC["🇨 Block C\nDoku-Architektur\n3 Schichten + Hub"]
+    P4["🏗️ Phase 4\nGrundstruktur\nDateien · Git · Hooks"]
+    P5["📦 Phase 5\nSkills via git-clone\n(keine Symlinks)"]
+    BD["🇩 Block D\nOptional-Komponenten\nSelf-Healing · DocSync\nDaemon · Learning-Loop"]
+    P7["🌐 Phase 7\nFinalisierung\nSecondBrain + Registry"]
+    DONE["🚀 Bereit fuer\n/ideation"]
+    LL["🔁 Learning-Loop\n/sprint-review →\njournal/learnings.md →\n/ideation"]
 
-    PF --> P0A --> P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> DONE
+    P0 --> BA --> BB --> BC --> P4 --> P5 --> BD --> P7 --> DONE
+    DONE -.-> LL
+    LL -.-> BA
 ```
 
 ---
@@ -660,9 +659,9 @@ mein-projekt/
     ├── rules/
     │   └── agent-patterns.md      ← 4 Team-Patterns, Lazy Loading (0 Token-Overhead)
     └── skills/
-        ├── ideation/      → Symlink oder Kopie
+        ├── ideation/      ← lokale Kopie via git clone (v3.0)
         ├── implement/     → Symlink oder Kopie
-        ├── backlog/       → Symlink oder Kopie
+        ├── backlog/       ← lokale Kopie via git clone (v3.0)
         └── ...            → je nach gewähltem Skill-Tier
 ```
 

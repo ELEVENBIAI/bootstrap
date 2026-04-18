@@ -216,22 +216,22 @@ export ANTHROPIC_API_KEY="your-api-key-here"
 This is the **only manual step** — after this, Claude does everything automatically.
 
 ```bash
-# Pull bootstrap skill from the GitHub repository
-mkdir -p /root/.claude/skills
+# Pull bootstrap skill from the GitHub repository (macOS/Linux — user home)
+mkdir -p ~/.claude/skills
 cd /tmp
 git clone --filter=blob:none --sparse git@github.com:vibercoder79/KI-Masterclass-Koerting-.git ki-skills
 cd ki-skills
 git sparse-checkout set bootstrap
-cp -r bootstrap /root/.claude/skills/
+cp -r bootstrap ~/.claude/skills/
 cd /tmp && rm -rf ki-skills
 
 # Verify the skill is there
-ls /root/.claude/skills/bootstrap/
+ls ~/.claude/skills/bootstrap/
 # → should show SKILL.md and a references/ folder
 ```
 
-> **Why only the bootstrap skill?** The bootstrap skill automatically installs all other skills
-> you'll need in phase 2. You don't have to pull them one by one.
+> **Why only the bootstrap skill?** In Phase 5, the bootstrap skill installs every other skill
+> you need via `git clone` — no symlinks, fully local and portable.
 
 ### Step 4: Create a new project
 
@@ -252,23 +252,34 @@ In the Claude Code session:
 /bootstrap
 ```
 
-Claude now walks you through 14 questions (about 5 minutes) and then builds everything automatically.
+Claude walks you through four short interview blocks (A–D), then builds everything automatically. Total time: ~10 minutes.
 
 ---
 
-## 5. The Bootstrap Process
+## 5. The Bootstrap Process (v3.0)
 
-![Bootstrap Skill — 5-Phase Overview](bootstrap-big-picture.en.png)
+![Bootstrap Skill — Interview-Block flow (A–D) + setup phases (0, 4, 5, 7)](bootstrap/docs/bootstrap-big-picture.en.png)
 
-*From empty folder to governance-ready project in 5 guided phases — governance hooks, skill set, self-healing monitor, and global registry entry included. ([Excalidraw source](bootstrap/docs/bootstrap-big-picture.en.excalidraw))*
+*From empty folder to governance-ready project — four interview blocks (A–D) frame the decisions, four setup phases (0, 4, 5, 7) execute them. Block D spins up optional components only if you want them. ([Excalidraw source](bootstrap/docs/bootstrap-big-picture.en.excalidraw))*
 
-### Phase 0: Questions & answers (you + Claude)
+### Overview
 
-Bootstrap asks questions in two steps.
+| Step | Type | Content |
+|------|------|---------|
+| **Phase 0** — Briefing | Announcement | Bootstrap tells you what's coming, you confirm |
+| **Block A** — Project core | Interview (7 questions) | Stack, name, description, path, GitHub URL, backlog tool + prefix, version |
+| **Block B** — Existing infrastructure | Interview (5 questions) | GitHub repo? Obsidian vault? Backlog tool? `.env`? CLAUDE.md? — integrates into what's already there |
+| **Block C** — Doc architecture | Proposal + review | 3-layer proposal (Story-Specs, Component-Docs, Architecture-Guidelines) + `ARCHITECTURE_DESIGN.md` Hub with auto-linking |
+| **Phase 4** — Base structure | Automatic (~2 min) | Files, Git init, linting, governance hooks, component skeletons |
+| **Phase 5** — Install skills | Automatic | Skills pulled via `git clone` from `KI-Masterclass-Koerting-` (no symlinks) |
+| **Block D** — Optional components | 4 yes/no at the end | Self-Healing / DocSync / Automation-Daemon / Learning-Loop (L1/L2/L3) |
+| **Phase 7** — Finalization | Automatic | SecondBrain integration, global registry entry, final commit |
 
-#### Step 1: Stack question — first of all
+> **Why blocks instead of a 14-question batch?** Single questions are easier to answer, and each block builds on the previous one — your doc-architecture proposal in Block C already knows your stack (A.1) and existing infra (B).
 
-Before anything else, bootstrap asks:
+### Block A — Project core (7 questions)
+
+#### A.1: Stack question — first of all
 
 ```
 What do you want to develop?
@@ -280,7 +291,7 @@ d) Python (AI/ML, scripts, FastAPI, Django)
 e) Other / not clear yet
 ```
 
-**Why first?** The answer determines which tools bootstrap sets up for you:
+The answer determines linting/formatting setup:
 
 | Your choice | Linter | Formatter | Auto-created |
 |-------------|--------|-----------|--------------|
@@ -289,67 +300,107 @@ e) Other / not clear yet
 | Full-stack | ESLint + Prettier | Prettier | `eslint.config.mjs` + `.prettierrc` |
 | Python | Ruff | Black | `pyproject.toml` |
 
-At the end, bootstrap also tells you which VS Code extensions you need for your stack.
+#### A.2–A.7: Project identity
 
-#### Step 2: Remaining questions (14 total)
-
-Then everything else at once:
-
-| Question | Example answer | Why it matters |
-|----------|---------------|-----------------|
+| Question | Example | Why |
+|----------|---------|-----|
 | Project name | `MyShop` | Used everywhere |
 | Short description | `E-commerce for handmade products` | Claude understands what you're building |
 | Project path | `/home/user/my-project` | Where the code lives |
-| GitHub repository URL | `git@github.com:your-user/my-project.git` | For backup and versioning |
-| Linear team name | `MyShop` | For issue tracking |
-| Issue prefix | `SHOP` | Your stories will be SHOP-1, SHOP-2... |
+| Backlog tool | `linear` / `github-issues` / `none` | Drives issue-prefix use + daemon eligibility |
+| Issue prefix | `SHOP` | Stories become SHOP-1, SHOP-2, … |
 | Start version | `1.0.0` | Versioning from day 1 |
 
-**Skill selection:**
+#### A.8: Architecture dimensions + add-ons
+
+Bootstrap installs 6 **standard** architecture dimensions (Domain, Data, Integration, Security, Operations, UX) and asks you which of 4 **optional add-ons** to add:
+
+| Add-on | When it makes sense |
+|--------|---------------------|
+| **Privacy** | You process personal data, GDPR applies |
+| **Cost** | Cloud bill is non-trivial, LLM calls are billed per token |
+| **Signal** | Trading, monitoring, anything driven by external signals |
+| **Compliance** | Regulated industry (finance, health, public sector) |
+
+Pick any combination — default is "none selected". Every enabled dimension becomes a section in `architecture-dimensions.md` that `/ideation` and `/architecture-review` will check.
+
+### Block B — Existing infrastructure (5 questions)
+
+Bootstrap integrates into what's already there instead of overwriting. It asks:
+
+1. **GitHub repo already exists?** (URL or "create new")
+2. **Obsidian vault in use?** (path or "no")
+3. **Backlog tool configured?** (Linear project / GitHub issues / none)
+4. **`.env` already present?** (keep keys or create template)
+5. **`CLAUDE.md` already present?** (merge or overwrite)
+
+### Block C — Doc architecture
+
+Based on your stack (A.1) and existing infra (Block B), bootstrap presents a **3-layer doc architecture**:
+
+| Layer | Lives in | Purpose |
+|-------|----------|---------|
+| **1. Story-Specs** | `specs/ISSUE-XX.md` | Per-story, mandatory for commit via `spec-gate.sh` |
+| **2. Component-Docs** | `docs/components/*.md` or Obsidian `Components/*.md` | Living doc per component (voice, memory, frontend …) |
+| **3. Architecture-Guidelines** | `Architektur-Vorgaben.md` | Consolidated stack decisions, cross-cutting rules |
+
+**Hub:** `ARCHITECTURE_DESIGN.md` links to all three layers via **§9 auto-linking** — every new `*.md` under the doc folders gets auto-registered in the Hub. Optional `orphan-check.sh` hook blocks commits that add docs without Hub entry.
+
+You can accept the proposal as-is, customize it, or opt out of individual layers.
+
+### Phase 4: Base structure (automatic, ~2 min)
+
+Claude creates files, initializes Git, sets up linting, installs governance hooks, and scaffolds component doc skeletons. See the [Artifact Map](#7-the-artifacts--what-gets-created-where-and-why) for a visual overview.
+
+### Phase 5: Install skills (automatic)
+
+Skills are pulled from the `vibercoder79/KI-Masterclass-Koerting-` repository via `git clone` into `.claude/skills/` — **no symlinks, no runtime dependency on the source repo**. The skill copies are local and portable.
 
 ```
 Which skills to install?
-a) Minimum (ideation, implement, backlog)      ← Ideal for the start
+a) Minimum (ideation, implement, backlog)       ← Ideal for the start
 b) Standard (+ architecture-review, sprint-review, research, breakfix)  ← Recommended
-c) Full (all skills)                           ← If you want the full arsenal
+c) Full (all skills)                            ← Full arsenal
 d) Pick manually
 ```
 
-> **Recommendation:** Start with **Standard (b)**. You can add more skills anytime.
+### Block D — Optional components (at the end)
 
-### Phase 1: Base structure (automatic, ~2 min)
+After the base project is set up, bootstrap asks 4 yes/no questions:
 
-Claude creates all files — tooling files adjust to your stack automatically.
+| Component | What it does | Cost |
+|-----------|--------------|------|
+| **Self-Healing agent** | Cron check every 15 min: versions synced, files present, daemons running | Low |
+| **DocSync to Obsidian** | Auto-mirror docs to your vault | None (if Obsidian exists) |
+| **Automation daemon** | Linear webhook → auto-`/implement` on "In Progress" | Requires Linear + webhook endpoint |
+| **Learning-Loop (L1/L2/L3)** | Framework gets smarter with every sprint — see next section | L1 free, L3 adds SQLite |
 
-See the [Artifact Map](#7-the-artifacts--what-gets-created-where-and-why) for a visual overview of every file created and how they relate.
+### Learning-Loop (L1/L2/L3)
 
-### Phase 2: Install skills (automatic)
+A **portable feedback loop** that turns completed sprints into anti-pattern warnings for future stories. Three levels, pick one:
 
-Claude pulls the selected skills from GitHub.
+| Level | Storage | Write | Read |
+|-------|---------|-------|------|
+| **L1 — Simple** | `journal/learnings.md` (append-only markdown) | `/sprint-review` appends after every review | `/ideation` reads at story creation (warns on matching anti-patterns) |
+| **L2 — Sprint-Journal** | `journal/sprint-YYYY-QN.md` (one file per sprint) | `/sprint-review` | `/ideation` + `/architecture-review` |
+| **L3 — SQLite** | `.learning-loop/loop.db` (structured) | `/sprint-review` | `/ideation` + `/architecture-review` + `/backlog` (priority adjustment) |
 
-### Phase 3: Set up self-healing (automatic)
+**Why it matters:** Without the loop, every sprint starts from zero. With the loop, decisions that caused pain last sprint (wrong dependency, missed Acceptance Criterion, scope creep) show up as warnings *before* the next story gets created.
 
-An agent that checks every 15 minutes:
+### Phase 7: Finalization
 
-- Is everything running as planned?
-- Are all docs up to date?
-- Are there any inconsistencies?
-
-Problems → Telegram alert (optional) or log entry.
-
-### Phase 4: Automation daemon (optional)
-
-If you use Linear + GitHub: a daemon that automatically implements code as soon as you set
-an issue to "In Progress". Claude writes code, pushes, and closes the issue.
-
-### Phase 5: Done
+- **SecondBrain integration** — if Block B.2 confirmed an Obsidian vault, bootstrap creates a PMO hub under `02 Projekte/<ProjectName>/`
+- **Global registry** — `~/.claude/MEMORY.md` gets a pointer to the new project
+- **Final commit** — everything in one commit with a summary table
 
 ```
-✓ Project structure created
-✓ 7 skills installed
-✓ Git hooks active
-✓ Self-healing running
-✓ Global registry updated
+✓ Block A: Project core + stack + add-ons
+✓ Block B: Existing infrastructure integrated
+✓ Block C: Doc architecture (3 layers + Hub)
+✓ Phase 4: Base structure (files, Git, linting, hooks, labels)
+✓ Phase 5: Skills installed ({count})
+✓ Block D: Optional components ({status})
+✓ Phase 7: SecondBrain + Registry + Final-Commit
 
 Your project is ready. Start with: /ideation
 ```
@@ -1294,22 +1345,22 @@ export ANTHROPIC_API_KEY="dein-api-key-hier"
 Das ist der **einzige manuelle Schritt** — danach macht Claude alles automatisch.
 
 ```bash
-# Bootstrap Skill vom GitHub Repository holen
-mkdir -p /root/.claude/skills
+# Bootstrap Skill vom GitHub Repository holen (macOS/Linux — User-Home)
+mkdir -p ~/.claude/skills
 cd /tmp
 git clone --filter=blob:none --sparse git@github.com:vibercoder79/KI-Masterclass-Koerting-.git ki-skills
 cd ki-skills
 git sparse-checkout set bootstrap
-cp -r bootstrap /root/.claude/skills/
+cp -r bootstrap ~/.claude/skills/
 cd /tmp && rm -rf ki-skills
 
 # Prüfen ob der Skill da ist
-ls /root/.claude/skills/bootstrap/
+ls ~/.claude/skills/bootstrap/
 # → Sollte SKILL.md und einen references/ Ordner zeigen
 ```
 
-> **Warum nur den Bootstrap Skill?** Der Bootstrap Skill installiert in Phase 2 automatisch
-> alle weiteren Skills die du brauchst. Du musst nicht jeden einzeln holen.
+> **Warum nur den Bootstrap Skill?** Der Bootstrap Skill installiert in Phase 5 (via `git clone`)
+> automatisch alle weiteren Skills die du brauchst — keine Symlinks, lokal und portabel.
 
 ### Schritt 4: Neues Projekt anlegen
 
@@ -1330,23 +1381,34 @@ In der Claude Code Session:
 /bootstrap
 ```
 
-Claude führt dich jetzt durch 14 Fragen (ca. 5 Minuten) und baut danach alles automatisch auf.
+Claude führt dich jetzt durch vier kurze Interview-Blöcke (A–D) und baut danach alles automatisch auf. Gesamtzeit: ca. 10 Minuten.
 
 ---
 
-## 5. Der Bootstrap-Prozess
+## 5. Der Bootstrap-Prozess (v3.0)
 
-![Bootstrap Skill — 5-Phasen-Übersicht](bootstrap-big-picture.png)
+![Bootstrap Skill — Interview-Block-Flow (A–D) + Setup-Phasen (0, 4, 5, 7)](bootstrap/docs/bootstrap-big-picture.png)
 
-*Vom leeren Ordner zum governance-ready Projekt in 5 geführten Phasen — Governance-Hooks, Skill-Set, Self-Healing-Monitor und globaler Registry-Eintrag inklusive. ([Excalidraw-Quelle](bootstrap/docs/bootstrap-big-picture.excalidraw))*
+*Vom leeren Ordner zum governance-ready Projekt — vier Interview-Blöcke (A–D) umrahmen die Entscheidungen, vier Setup-Phasen (0, 4, 5, 7) setzen sie um. Block D aktiviert optionale Komponenten nur wenn du sie willst. ([Excalidraw-Quelle](bootstrap/docs/bootstrap-big-picture.excalidraw))*
 
-### Phase 0: Fragen & Antworten (du + Claude)
+### Überblick
 
-Bootstrap stellt die Fragen in zwei Schritten.
+| Schritt | Typ | Inhalt |
+|---------|-----|--------|
+| **Phase 0** — Briefing | Ankündigung | Bootstrap erklärt was kommt, du bestätigst |
+| **Block A** — Projekt-Kern | Interview (7 Fragen) | Stack, Name, Beschreibung, Pfad, GitHub-URL, Backlog-Tool + Prefix, Version |
+| **Block B** — Bestehende Infrastruktur | Interview (5 Fragen) | GitHub-Repo? Obsidian-Vault? Backlog-Tool? `.env`? CLAUDE.md? — integriert in das was schon da ist |
+| **Block C** — Doku-Architektur | Vorschlag + Review | 3-Schichten-Vorschlag (Story-Specs, Component-Docs, Architektur-Vorgaben) + `ARCHITECTURE_DESIGN.md` Hub mit Auto-Verlinkung |
+| **Phase 4** — Grundstruktur | Automatisch (~2 min) | Dateien, Git init, Linting, Governance-Hooks, Component-Skelette |
+| **Phase 5** — Skills installieren | Automatisch | Skills via `git clone` aus `KI-Masterclass-Koerting-` (keine Symlinks) |
+| **Block D** — Optional-Komponenten | 4× Ja/Nein am Ende | Self-Healing / DocSync / Automation-Daemon / Learning-Loop (L1/L2/L3) |
+| **Phase 7** — Finalisierung | Automatisch | SecondBrain-Integration, globaler Registry-Eintrag, finaler Commit |
 
-#### Schritt 1: Stack-Frage — als allererstes
+> **Warum Blöcke statt 14-Fragen-Batch?** Einzelne Fragen sind einfacher zu beantworten und jeder Block baut auf dem vorherigen auf — der Doku-Architektur-Vorschlag in Block C kennt deinen Stack (A.1) und deine bestehende Infra (B) schon.
 
-Bevor alles andere fragt Bootstrap:
+### Block A — Projekt-Kern (7 Fragen)
+
+#### A.1: Stack-Frage — als allererstes
 
 ```
 Was möchtest du entwickeln?
@@ -1358,7 +1420,7 @@ d) Python (KI/ML, Scripts, FastAPI, Django)
 e) Anderes / Noch nicht klar
 ```
 
-**Warum zuerst?** Die Antwort bestimmt welche Werkzeuge Bootstrap für dich einrichtet:
+Die Antwort bestimmt Linter und Formatter:
 
 | Deine Wahl | Linter | Formatter | Wird automatisch angelegt |
 |-----------|--------|-----------|--------------------------|
@@ -1367,113 +1429,109 @@ e) Anderes / Noch nicht klar
 | Full-Stack | ESLint + Prettier | Prettier | `eslint.config.mjs` + `.prettierrc` |
 | Python | Ruff | Black | `pyproject.toml` |
 
-Am Ende sagt Bootstrap dir auch welche VS Code Extensions du für deinen Stack brauchst.
+#### A.2–A.7: Projekt-Identität
 
-#### Schritt 2: Restliche Fragen (14 Stück)
-
-Danach kommen alle weiteren Infos auf einmal:
-
-| Frage | Beispiel-Antwort | Warum wichtig |
-|-------|-----------------|---------------|
+| Frage | Beispiel | Warum |
+|-------|----------|-------|
 | Projektname | `MeinShop` | Wird überall verwendet |
 | Kurze Beschreibung | `E-Commerce für handgemachte Produkte` | Claude versteht was du baust |
 | Projekt-Pfad | `/home/user/mein-projekt` | Wo der Code landet |
-| GitHub Repository URL | `git@github.com:dein-user/mein-projekt.git` | Für Code-Backup und Versionierung |
-| Linear Team Name | `MeinShop` | Für Issue-Tracking |
-| Issue-Prefix | `SHOP` | Deine Stories heißen SHOP-1, SHOP-2... |
+| Backlog-Tool | `linear` / `github-issues` / `none` | Steuert Issue-Prefix und Daemon-Eligibility |
+| Issue-Prefix | `SHOP` | Stories werden SHOP-1, SHOP-2, … |
 | Start-Version | `1.0.0` | Versionierung ab Tag 1 |
 
-**Skills-Auswahl:**
+#### A.8: Architektur-Dimensionen + Add-ons
+
+Bootstrap installiert 6 **Standard**-Architektur-Dimensionen (Domain, Data, Integration, Security, Operations, UX) und fragt, welche der 4 **optionalen Add-ons** dazugeschaltet werden:
+
+| Add-on | Wann sinnvoll |
+|--------|---------------|
+| **Privacy** | Du verarbeitest personenbezogene Daten, DSGVO gilt |
+| **Cost** | Cloud-Rechnung ist relevant, LLM-Calls werden per Token abgerechnet |
+| **Signal** | Trading, Monitoring, alles was auf externe Signale reagiert |
+| **Compliance** | Regulierte Branche (Finance, Health, öffentlicher Sektor) |
+
+Beliebige Kombination möglich — Default ist "keine". Jede aktivierte Dimension wird eine Sektion in `architecture-dimensions.md`, die `/ideation` und `/architecture-review` später prüfen.
+
+### Block B — Bestehende Infrastruktur (5 Fragen)
+
+Bootstrap integriert in das was schon da ist, statt zu überschreiben. Die Fragen:
+
+1. **GitHub-Repo existiert schon?** (URL oder "neu anlegen")
+2. **Obsidian-Vault im Einsatz?** (Pfad oder "nein")
+3. **Backlog-Tool eingerichtet?** (Linear-Projekt / GitHub-Issues / none)
+4. **`.env` schon da?** (Keys behalten oder Template anlegen)
+5. **`CLAUDE.md` schon da?** (mergen oder überschreiben)
+
+### Block C — Doku-Architektur
+
+Basierend auf Stack (A.1) und bestehender Infra (Block B) schlägt Bootstrap eine **3-Schichten-Doku-Architektur** vor:
+
+| Schicht | Lebt in | Zweck |
+|---------|---------|-------|
+| **1. Story-Specs** | `specs/ISSUE-XX.md` | Pro Story, Pflicht für Commit via `spec-gate.sh` |
+| **2. Component-Docs** | `docs/components/*.md` oder Obsidian `Components/*.md` | Lebende Doku pro Komponente (voice, memory, frontend …) |
+| **3. Architektur-Vorgaben** | `Architektur-Vorgaben.md` | Konsolidierte Stack-Entscheidungen, querschnittliche Regeln |
+
+**Hub:** `ARCHITECTURE_DESIGN.md` verlinkt alle drei Schichten via **§9-Auto-Verlinkung** — jede neue `*.md` unter den Doku-Ordnern wird automatisch im Hub registriert. Optionaler `orphan-check.sh`-Hook blockiert Commits mit Docs ohne Hub-Eintrag.
+
+Du kannst den Vorschlag übernehmen, anpassen oder einzelne Schichten abwählen.
+
+### Phase 4: Grundstruktur (automatisch, ~2 Minuten)
+
+Claude legt Dateien an, initialisiert Git, richtet Linting ein, installiert Governance-Hooks und scaffolded die Component-Doc-Skelette. Siehe [Artefakte-Landkarte](#7-die-artefakte--was-entsteht-wo-und-warum) für eine visuelle Übersicht aller Dateien.
+
+**Wichtigste Datei: `CLAUDE.md`** — der "Personalausweis" deines Projekts für die KI. Bei jeder neuen Claude-Session liest Claude diese Datei und kennt sofort Projekt, Regeln, Dateipfade, letzten Stand.
+
+### Phase 5: Skills installieren (automatisch)
+
+Skills werden via `git clone` aus dem Repository `vibercoder79/KI-Masterclass-Koerting-` nach `.claude/skills/` geholt — **keine Symlinks, keine Runtime-Abhängigkeit zum Quell-Repo**. Die Skill-Kopien sind lokal und portabel.
 
 ```
 Welche Skills installieren?
 a) Minimum (ideation, implement, backlog)      ← Für den Start ideal
 b) Standard (+ architecture-review, sprint-review, research, breakfix)  ← Empfohlen
-c) Voll (alle Skills)                          ← Wenn du das volle Arsenal willst
+c) Voll (alle Skills)                          ← Volles Arsenal
 d) Manuell auswählen
 ```
 
-> **Empfehlung:** Starte mit **Standard (b)**. Du kannst jederzeit weitere Skills nachrüsten.
+### Block D — Optional-Komponenten (am Ende)
 
-### Phase 1: Grundstruktur (automatisch, ~2 Minuten)
+Nachdem das Basisprojekt steht, stellt Bootstrap 4 Ja/Nein-Fragen:
 
-Claude erstellt alle Dateien — die Tooling-Dateien passen sich automatisch deinem Stack an:
+| Komponente | Was sie macht | Kosten |
+|------------|---------------|--------|
+| **Self-Healing-Agent** | Cron-Check alle 15 Min: Versionen synchron, Dateien vorhanden, Daemons laufen | Niedrig |
+| **DocSync zu Obsidian** | Auto-Spiegel der Docs in deinen Vault | Keine (wenn Vault existiert) |
+| **Automation-Daemon** | Linear-Webhook → automatisches `/implement` bei "In Progress" | Braucht Linear + Webhook-Endpoint |
+| **Learning-Loop (L1/L2/L3)** | Framework wird mit jedem Sprint klüger — siehe nächste Sektion | L1 gratis, L3 bringt SQLite |
 
-```
-dein-projekt/
-├── lib/
-│   └── config.js           ← Zentrale Konfiguration (SSoT)
-├── agents/
-│   └── self-healing.js     ← Überwacht dein System
-├── journal/                ← Alle Logs
-├── specs/
-│   └── TEMPLATE.md         ← Vorlage für neue Features
-├── docs/                   ← Technische Dokumentation
-├── .claude/
-│   ├── skills/             ← Deine installierten Skills
-│   └── hooks/              ← Git-Governance-Regeln
-├── CLAUDE.md               ← "Wer bin ich?" für die KI
-├── SYSTEM_ARCHITECTURE.md
-├── API_INVENTORY.md
-├── INDEX.md
-├── CHANGELOG.md
-├── GOVERNANCE.md
-├── SECURITY.md
-├── .env.example            ← API Key Template
-│
-│   ── Stack-abhängig (automatisch) ──
-├── eslint.config.mjs       ← Node.js / Frontend / Full-Stack
-├── .prettierrc             ← nur Frontend / Full-Stack
-└── pyproject.toml          ← nur Python (Black + Ruff)
-```
+### Learning-Loop (L1/L2/L3)
 
-**Die wichtigste Datei: `CLAUDE.md`**
+Eine **portable Feedback-Schleife**, die abgeschlossene Sprints in Anti-Pattern-Warnungen für zukünftige Stories verwandelt. Drei Stufen zur Auswahl:
 
-Das ist der "Personalausweis" deines Projekts für die KI. Jedes Mal wenn du eine neue
-Claude-Session startest, liest Claude diese Datei und kennt sofort:
-- Was dein Projekt ist
-- Welche Regeln gelten
-- Wo welche Dateien sind
-- Was zuletzt passiert ist
+| Level | Speicher | Schreibt | Liest |
+|-------|----------|----------|-------|
+| **L1 — Einfach** | `journal/learnings.md` (append-only Markdown) | `/sprint-review` hängt nach jedem Review an | `/ideation` liest bei Story-Erstellung (warnt bei passendem Anti-Pattern) |
+| **L2 — Sprint-Journal** | `journal/sprint-YYYY-QN.md` (eine Datei pro Sprint) | `/sprint-review` | `/ideation` + `/architecture-review` |
+| **L3 — SQLite** | `.learning-loop/loop.db` (strukturiert) | `/sprint-review` | `/ideation` + `/architecture-review` + `/backlog` (Prio-Anpassung) |
 
-### Phase 2: Skills installieren (automatisch)
+**Warum das wichtig ist:** Ohne Loop startet jeder Sprint bei Null. Mit Loop tauchen Entscheidungen, die letzten Sprint Schmerzen verursacht haben (falsche Abhängigkeit, übersehene Acceptance Criterion, Scope Creep), als Warnung auf — *bevor* die nächste Story geschrieben wird.
 
-Claude lädt die gewählten Skills von GitHub:
+### Phase 7: Finalisierung
+
+- **SecondBrain-Integration** — wenn Block B.2 einen Obsidian-Vault bestätigt hat, legt Bootstrap einen PMO-Hub unter `02 Projekte/<ProjektName>/` an
+- **Globale Registry** — `~/.claude/MEMORY.md` bekommt einen Pointer auf das neue Projekt
+- **Finaler Commit** — alles in einem Commit mit Zusammenfassungs-Tabelle
 
 ```
-Installing skills...
-✓ ideation
-✓ implement
-✓ backlog
-✓ architecture-review
-✓ sprint-review
-✓ research
-✓ breakfix
-```
-
-### Phase 3: Self-Healing einrichten (automatisch)
-
-Ein Agent der alle 15 Minuten automatisch prüft:
-- Läuft alles wie geplant?
-- Sind alle Docs auf dem neuesten Stand?
-- Gibt es Inkonsistenzen?
-
-Bei Problemen bekommst du einen Telegram-Alert (optional) oder einen Log-Eintrag.
-
-### Phase 4: Automation Daemon (optional)
-
-Wenn du Linear + GitHub nutzt: Ein Daemon der automatisch Code implementiert, sobald du
-ein Issue auf "In Progress" setzt. Claude schreibt dann selbstständig Code, pusht ihn und
-schließt das Issue.
-
-### Phase 5: Fertig
-
-```
-✓ Projekt-Struktur angelegt
-✓ 7 Skills installiert
-✓ Git Hooks aktiv
-✓ Self-Healing läuft
-✓ Globale Registry aktualisiert
+✓ Block A: Projekt-Kern + Stack + Add-ons
+✓ Block B: Bestehende Infrastruktur integriert
+✓ Block C: Doku-Architektur (3 Schichten + Hub)
+✓ Phase 4: Grundstruktur (Dateien, Git, Linting, Hooks, Labels)
+✓ Phase 5: Skills installiert ({Anzahl})
+✓ Block D: Optional-Komponenten ({Status})
+✓ Phase 7: SecondBrain + Registry + Final-Commit
 
 Dein Projekt ist bereit. Starte mit: /ideation
 ```
