@@ -1,129 +1,133 @@
-# Aenderungs-Checkliste
+# Aenderungs-Checkliste (generisch)
 
-PFLICHT bei jeder Code-Aenderung, egal wie klein.
+PFLICHT bei jeder Code-Aenderung, egal wie klein. Durchgehen am Ende von Schritt 5 im `/implement`-Workflow.
 
-## 1. Dokumentation aktualisieren — Layer-Impact-Map
+## 1. Doku-Impact pro Aenderungs-Typ
 
-**Schritt:** Welche Layer/Komponenten wurden geaendert? → Entsprechende Docs pruefen.
+Aus dem Linear-Label oder dem geaenderten Bereich den Aenderungs-Typ ableiten. Dann die entsprechenden Docs aktualisieren.
 
-| Geaenderter Bereich | Docs die IMMER geprueft werden muessen |
-|---------------------|----------------------------------------|
-| **L1 Signal-Agent** (neu/geaendert/entfernt) | `SIGNAL_SOURCES_INVENTORY.md`, `COMPONENT_INVENTORY.md`, `CLAUDE.md §9`, `SYSTEM_ARCHITECTURE.md` Agent-Tabelle |
-| **L2 Scoring/Supervisor** (Gewichte, Score-Logik, Veto) | `docs/SUPERVISOR_DECISION_LOGIC.md`, `TRADING_RULES.md`, `CLAUDE.md §7` |
-| **L3 LLM/Arbiter** (Debate, Risk Manager, LLM-Calls) | `docs/SUPERVISOR_DECISION_LOGIC.md`, `CLAUDE.md §3` |
-| **L4 Execution** (trader.js, adapters, exec-router, pool) | `ARCHITECTURE_DESIGN.md §9`, `COMPONENT_INVENTORY.md` Exchange Adapters, `SECURITY.md §10.3`, `docs/TRADE_LIFECYCLE.md` |
-| **L5 Monitoring/Self-Healing** (neuer Check, Schwellwert) | `CLAUDE.md §13`, `SYSTEM_ARCHITECTURE.md` Self-Healing Tabelle |
-| **L6 Brain-DB** (neue Tabelle, Schema-Version, Writer) | Spezial-Checkliste unten: "Brain DB aendern" |
-| **L7 Presentation** (Dashboard, Telegram, Briefing) | `TELEGRAM_REPORTS.md`, `SYSTEM-DOKUMENTATION.md §Dashboard` |
-| **Config / Kill-Switch** | `docs/KILL_SWITCHES.md`, `CLAUDE.md §6` |
-| **Neuer ADR** | `ARCHITECTURE_DESIGN.md §3`, `INDEX.md`, ggf. neues Guard-Story-Kandidat pruefen |
-| **Exchange-Onboarding** | `docs/EXCHANGE-ONBOARDING.md`, `SECURITY.md §3.3 + §5.1 + §10.3`, `COMPONENT_INVENTORY.md` |
-| **Neue API-Integration** | `API_INVENTORY.md`, `SECURITY.md §3.2-Checkliste`, Spezial-Checkliste unten: "Neue API" |
-| **Neue externe Datenquelle** | `SIGNAL_SOURCES_INVENTORY.md`, `API_INVENTORY.md`, ADR-20-Klassifikation (Composite vs. Standalone) |
-| **Mirror / Account Pool** | `docs/MIRROR-ACCOUNT-ONBOARDING.md`, `ARCHITECTURE_DESIGN.md §9`, `SECURITY.md §10.3` |
-| **Governance / Skill** | `GOVERNANCE.md`, betroffene `SKILL.md`, `RUNBOOK.md` (Spezial unten) |
+| Aenderungs-Typ | Docs die IMMER geprueft werden |
+|----------------|-------------------------------|
+| **Neue Komponente / Modul** | `ARCHITECTURE_DESIGN.md §9 Referenzen`, `COMPONENT_INVENTORY.md`, `SYSTEM_ARCHITECTURE.md`, Component-Doc (Obsidian oder `docs/components/`) |
+| **API-Integration** (extern) | `SECURITY.md` (Threat-Surface), Component-Doc, `.env.example` (neue Variablen), `CHANGELOG.md` |
+| **Konfiguration / Secrets** | `.env.example`, `SECURITY.md` (Secret-Handling), `lib/config.js` (falls SSoT-Werte), `CLAUDE.md` (wenn Systemverhalten sich aendert) |
+| **Security-relevante Aenderung** | `SECURITY.md` (immer), `ARCHITECTURE_DESIGN.md §3 Quality Attributes`, ADR falls Architektur-Impact |
+| **Doku / Governance-Aenderung** | `GOVERNANCE.md`, `DEVELOPMENT_PROCESS.md`, `CLAUDE.md`, betroffene Skill-Files |
+| **Neue Abhaengigkeit** | `package.json` / `pyproject.toml`, `SECURITY.md` (Supply-Chain-Risk), ggf. `SYSTEM_ARCHITECTURE.md` |
+| **Neuer ADR** | `ARCHITECTURE_DESIGN.md §7 ADR-Tabelle`, `Decisions/ADR-XX.md` (in Obsidian oder `docs/adr/`), Referenz in betroffenen Component-Docs |
+| **Neue Datei** (jede `*.md`) | `ARCHITECTURE_DESIGN.md §9 Referenzen` (erzwungen durch `orphan-check.sh` wenn installiert), `INDEX.md` |
+| **Hook / Governance-Hook-Aenderung** | `GOVERNANCE.md`, `.claude/settings.json` + `settings.local.json`, `hooks-setup.md` falls Skill-Teil |
+| **Phase-Uebergang** (z.B. Phase 0 → 1) | PMO-Hub (Obsidian), `ARCHITECTURE_DESIGN.md §6 Phasen-Mapping`, alle Component-Docs (Phase-Status), `CHANGELOG.md` |
 
 **Immer gilt:**
-- Alle geaenderten Docs auf aktuelle `VERSION` in config.js bringen
+- Component-Doc der betroffenen Komponente aktualisieren (Stack, Phase-Status, Verbundene Stories, offene Fragen)
+- `lib/config.js` VERSION bumpen wenn DOC_FILES aktualisiert wurden
+- Alle DOC_FILES auf neue VERSION bringen (erzwungen durch `doc-version-sync.sh`)
 - `CHANGELOG.md` Eintrag mit Version + Beschreibung
-- `CLAUDE.md` wenn Systemverhalten sich aendert (neue Pfade, neue Kill-Switches, neue Thresholds)
 
 ---
 
-## 2. Git Commit + Push
+## 2. Privacy-Check (IMMER)
 
-- Code UND Doku-Aenderungen committen
-- `commitAndPush('T{N}: CLAW-XXX — [Titel]')`
+Fuer jede Aenderung pruefen:
+
+- [ ] Wird eine neue Datenflussgrenze zu externem System ueberschritten? (Cloud-API, Third-Party-Service, Webhook)
+- [ ] Werden personenbezogene Daten verarbeitet oder uebertragen?
+- [ ] Ist das Projekt mit `Privacy`-Add-on konfiguriert? Dann: Datenflusskontrolle pruefen (Redaktion? Tier-Modell?)
+- [ ] Werden Secrets im Code oder Log sichtbar? (`.env`-Check, Log-Sanitizing)
+
+Bei Privacy-relevanten Aenderungen: `SECURITY.md` Privacy-Sektion aktualisieren.
 
 ---
 
-## 3. Obsidian Change-Log
+## 3. Architektur-Konsistenz-Check
 
-- `linear.writeChangeLog()` mit Version + Beschreibung
+- [ ] Keine hardcoded Werte die in `lib/config.js` gehoeren (SSoT respektieren)
+- [ ] Config-Werte ueber `.env` konfigurierbar wenn umgebungs-spezifisch
+- [ ] Error-Handling vorhanden wo noetig (API-Calls, File-I/O, User-Input)
+- [ ] Logging implementiert bei Fehlern und wichtigen State-Aenderungen
+- [ ] Bestehende Patterns eingehalten (nicht neue Konventionen einfuehren wenn nicht noetig)
 
 ---
 
-## Spezial-Checklisten
+## 4. Git Commit + Push
 
-### Agent hinzufuegen/entfernen:
-- [ ] config.js → `AGENT_REGISTRY` (einzige SSoT — Weights/SignalFiles/Daemon-Restart werden abgeleitet)
-- [ ] run-parallel.sh → Tier-Liste (FAST/MEDIUM/SLOW) falls nicht ueber AGENT_REGISTRY
-- [ ] CLAUDE.md → Agent-Tabelle §9
-- [ ] Signal-Datei initial erstellen
-- [ ] SIGNAL_SOURCES_INVENTORY.md Eintrag
-- [ ] COMPONENT_INVENTORY.md Eintrag
+- Code UND Doku-Aenderungen in einem Commit
+- Commit-Message: `feat: <PREFIX>XXX — [Titel]` / `fix: <PREFIX>XXX — [Titel]` / `docs: ...` / `refactor: ...`
+- `spec-gate.sh` + `doc-version-sync.sh` muessen gruen sein
+- Push nach dem erfolgreichen Commit
 
-### Gewichte aendern:
-- [ ] Summe aller AGENT_WEIGHTS = 1.00 (exakt)
-- [ ] optimized-weights.json loeschen/resetten
-- [ ] Weight-Optimizer Constraints pruefen
-- [ ] ADR-20 Klassifikation pruefen (Composite vs. Standalone, kein Double-Counting)
+---
 
-### Trade-Logik aendern:
-- [ ] config.js Thresholds (TEST_MODE vs PRODUCTION)
-- [ ] trader.js importiert aus config.js (keine Hardcodes)
-- [ ] SL/TP Ranges in config.js
-- [ ] **TRADE_FLOW.md** aktualisieren (SSoT End-to-End-Flow) bei Aenderungen an:
-  - Score-Schwellen (BUY_SCORE, SELL_SCORE), Sizing-Tiers, Vola-Adjust, LLM-Gates, Scale-In, Safety-Checks
-  - `lib/config.js` RULES / TRADING.sizingTiers / volaAdaptiveSizing / scaleInProfitPct
-  - `capital/trader.js` openTrade(), calcPositionSizePct(), applyVolaAdjust()
-- [ ] docs/TRADE_LIFECYCLE.md aktualisieren (SL/TP, BE, Trailing, Multi-TP, Sizing-Tabelle)
-- [ ] TRADING_RULES.md aktualisieren
-- [ ] CLAUDE.md §6 Regelwerk aktualisieren
+## Spezial-Checklisten (pro Aenderungs-Typ)
 
-### Exchange-Layer aendern (trader.js, adapters, exec-router, account-pool):
-- [ ] Gilt ADR-13? Kein Exchange-API-Call ausserhalb des Adapters (Self-Healing L11 prueft)
-- [ ] Gilt ADR-17? Alle Dynamiken laufen ueber Account Pool Manager (nie direkt ueber Adapter)
-- [ ] ARCHITECTURE_DESIGN.md §9 aktualisieren (Diagramm, Checkliste, Exchange-Vergleich)
-- [ ] COMPONENT_INVENTORY.md Exchange Adapters Tabelle aktualisieren
-- [ ] SECURITY.md §10.3 Exchange Failover Tabelle aktualisieren
-- [ ] docs/TRADE_LIFECYCLE.md wenn neue Dynamik (BE, Trailing, Multi-TP, etc.) eingebaut wird
-- [ ] Bei neuem Exchange-Typ: `docs/EXCHANGE-ONBOARDING.md` Runbook befolgen
+### Neue Komponente / Modul hinzufuegen
 
-### Neue API integrieren:
-- [ ] Rate Limiting implementieren
-- [ ] **Secret erstellen:** `echo -n "key" > {PROJECT_PATH}/secrets/<name>.txt && chmod 600`
-- [ ] **docker-compose.yml:** Secret in `secrets:` Block (oben: Service-Referenz + unten: File-Pfad)
-- [ ] **config.js:** `readSecret('<name>')` verwenden (NICHT `env.KEY` oder `process.env.KEY`)
-- [ ] **Encrypted Backup aktualisieren:** `sops encrypt --input-type dotenv --output-type yaml .env > secrets/prod.enc.yaml`
-- [ ] Error-Logging: Keys sanitizen (keine Secrets in Logs/Telegram) — `lib/logger.js sanitize()`
-- [ ] Timeout setzen (max 15s Trading-kritisch, 60s Research)
-- [ ] Fallback bei API-Ausfall (Graceful Degradation, ADR-10)
-- [ ] API_INVENTORY.md aktualisieren
-- [ ] SECURITY.md §3.3 (neue Credentials), §4.2 (Input-Validation), §5.1 (Auth) aktualisieren
+- [ ] `ARCHITECTURE_DESIGN.md §9 Referenzen`: neuer Eintrag
+- [ ] `COMPONENT_INVENTORY.md`: Zeile mit Status, Pfad, Zweck
+- [ ] `SYSTEM_ARCHITECTURE.md`: Tabelle ergaenzen
+- [ ] Component-Doc anlegen (Skelett-Struktur aus `bootstrap/references/doc-architecture-proposal.md`)
+- [ ] `INDEX.md`: neuer Eintrag
+- [ ] `.env.example`: neue Variablen dokumentiert
+- [ ] `lib/config.js`: wenn konfigurierbar, VERSION bump
 
-### Neuen ADR hinzufuegen:
-- [ ] ARCHITECTURE_DESIGN.md §3 neuer ADR-Block
-- [ ] INDEX.md Referenz pruefen
-- [ ] Enforcement-Frage stellen: "Ist dieser Entscheid maschinell erzwungen oder nur dokumentiert?"
-  - Nur dokumentiert → Guard-Story-Kandidat pruefen (Self-Healing Check? Commit-Hook?)
-- [ ] CHANGELOG.md Eintrag
+### Neue externe API integrieren
 
-### Brain DB aendern (neue Tabelle, neuer Writer, neuer Reader):
-- [ ] Writer-Tabelle in SYSTEM_ARCHITECTURE.md §9.2.1 ergaenzen
-- [ ] Reader-Tabelle in SYSTEM_ARCHITECTURE.md §9.2.2 ergaenzen
-- [ ] Impact-Matrix in SYSTEM_ARCHITECTURE.md §9.2.3 pruefen/aktualisieren
-- [ ] Bei neuer Tabelle: Migration in `claw-db.js` (naechste Schema-Version)
-- [ ] Bei neuer Tabelle: `getHealth()` Tabellen-Array erweitern
-- [ ] Bei neuer Tabelle: `DOCUMENTED_TABLES` in `self-healing.js` erweitern
-- [ ] Bei neuem Writer: Dedup-Strategie (INSERT OR IGNORE / UNIQUE INDEX)
-- [ ] Schema-Version in SYSTEM_ARCHITECTURE.md §9.2 aktualisieren
+- [ ] Rate-Limit-Handling implementiert
+- [ ] Timeout gesetzt
+- [ ] Offline-/Error-Fallback (Graceful Degradation)
+- [ ] API-Key nur in `.env` (niemals in Git, niemals in Log)
+- [ ] Logger sanitized (`logger.sanitize()` fuer Response-Text)
+- [ ] `SECURITY.md`: neue Threat-Surface dokumentiert
+- [ ] Component-Doc aktualisiert (Stack-Tabelle, offene Fragen)
+- [ ] Privacy-Tier-Kompatibilitaet dokumentiert (wenn Privacy-Add-on aktiv)
 
-### Security-Feature aendern:
-- [ ] SECURITY.md relevante Sektion aktualisieren (§2 Threat Model, §4 Input Validation, §5 Auth, §10 Trading-spezifisch)
-- [ ] Threat-Response-Matrix in §2.2 pruefen — wird eine bestehende Bedrohung mitigiert?
-- [ ] Audit-Status in §2.3 updaten
-- [ ] Self-Healing Check AA (Security Events) — neues Event-Type registrieren?
-- [ ] security-events.js bei neuen Security-Events erweitern
-- [ ] Bei neuem Inbound Webhook: HMAC-SHA256 Pflicht, Replay-Schutz, Rate-Limit, Body-Limit
+### Secrets-Management aendern
 
-### Governance, Skills oder Checklisten aendern:
-- [ ] RUNBOOK.md aktualisieren (betroffene Sektion synchronisieren)
-- [ ] Betrifft: GOVERNANCE.md, .claude/skills/*/SKILL.md, .claude/skills/*/references/*.md
-- [ ] Runbook enthaelt die vollstaendigen Skill-Definitionen + Reference-Inhalte — bei Aenderungen muessen die entsprechenden Sektionen im Runbook nachgezogen werden
+- [ ] `.env.example` mit Format-Erklaerung (NIE echte Werte)
+- [ ] `SECURITY.md §API-Key-Policy` aktualisiert
+- [ ] Bestehende `.gitignore`-Eintraege validieren
+- [ ] Bei Secret-Rotation: alte Keys deaktivieren, Event-Log schreiben
+- [ ] Keine Secrets in Logs (sanitize)
 
-### Systemgrenze ueberbruecken (OpenClaw ↔ Trading-System):
-- [ ] INTEGRATION_MAP.md aktualisieren (Datenfluss, Dateien, Frequenz, Kill-Switch)
-- [ ] Kill-Switch in config.js vorsehen
-- [ ] AGENTS.md aktualisieren wenn OpenClaw neue Tools/Befehle bekommt
-- [ ] Idempotent + Graceful Degradation sicherstellen
+### Neuer ADR
+
+- [ ] ADR-Datei in `Decisions/ADR-XX.md` (Obsidian) oder `docs/adr/ADR-XX.md` mit: Status, Kontext, Entscheidung, Konsequenzen, Alternativen
+- [ ] `ARCHITECTURE_DESIGN.md §7 ADR-Tabelle`: Eintrag
+- [ ] Betroffene Component-Docs: Referenz zum ADR
+- [ ] `CHANGELOG.md`: Eintrag
+- [ ] Enforcement-Frage: "Ist die Entscheidung maschinell erzwungen oder nur dokumentiert?" — bei nur dokumentiert: Guard-Story-Kandidat (Hook / Test / Self-Healing-Check)
+
+### Hook / Governance-Aenderung
+
+- [ ] `GOVERNANCE.md` Sektion aktualisieren
+- [ ] Hook-Skript in `.claude/hooks/` liegt
+- [ ] Hook in `.claude/settings.json` UND `.claude/settings.local.json` registriert (Harness-Fallback)
+- [ ] Hook-Test: Manuell ausloesen (z.B. Dummy-Commit) und Blockade pruefen
+- [ ] `bootstrap/references/hooks-setup.md` aktualisieren falls generischer Hook
+- [ ] `specs/<PREFIX>XXX.md` dokumentiert den neuen Hook
+
+### Security-Feature aendern
+
+- [ ] `SECURITY.md` relevante Sektion aktualisieren (Threat Model, Input-Validation, Auth)
+- [ ] Threat-Response-Matrix pruefen — wird bestehende Bedrohung mitigiert?
+- [ ] Bei neuem Inbound-Webhook: HMAC-Signierung, Replay-Schutz, Rate-Limit, Body-Limit
+- [ ] Bei neuer .env-Variable mit Credential: Sanitize in Logger, Dokumentation in `.env.example`
+
+### Governance / Skill aendern
+
+- [ ] Betroffene `SKILL.md` aktualisieren
+- [ ] `references/*.md` nachziehen wenn referenziert
+- [ ] `GOVERNANCE.md` aktualisieren wenn projekt-globale Regel betroffen
+- [ ] Version im Skill-Frontmatter erhoehen (`version:` in SKILL.md)
+- [ ] `publish_skill.py` laufen lassen wenn Skill ins Master-Repo soll
+
+---
+
+## 5. Component-Doc-Update (wenn Obsidian aktiv)
+
+Jede Code-Aenderung die eine Komponente beruehrt muss das Component-File aktualisieren:
+- `{OBSIDIAN_VAULT}/02 Projekte/{PROJECT_NAME}/Components/<komponente>.md`
+- Sektionen: Stack-Tabelle (wenn Tool-Aenderung), Phase-Status, Verbundene Stories (Link zu JAR-XXX + Spec), offene Fragen
+
+Wenn DocSync aktiviert (Block D.2): laeuft automatisch via `node lib/doc-sync.js`.
