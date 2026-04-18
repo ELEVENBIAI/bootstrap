@@ -1,151 +1,115 @@
-# Skills setup — new project installation
+# Skills Setup — New project installation
 
-## Available skills (source path)
+Skills are fetched from the official GitHub repo via `git clone` into a temp folder and copied into `{PROJECT_PATH}/.claude/skills/`. No symlinks to VPS paths, no global `/root/.claude/skills/`.
 
-All skills live globally under `/root/.claude/skills/`. For a new project they are linked
-or copied into the project's `.claude/skills/` directory.
+## Installation (standard flow)
 
-## Available skills (as of v2.0)
+```bash
+# Temp folder
+SKILL_SRC=$(mktemp -d)
+
+# Clone current skills repo (shallow)
+git clone --depth 1 https://github.com/vibercoder79/KI-Masterclass-Koerting- "$SKILL_SRC"
+
+# Create skills directory in project
+cd {PROJECT_PATH}
+mkdir -p .claude/skills
+
+# Copy selected skills
+for skill in ideation implement backlog; do
+  cp -R "$SKILL_SRC/$skill" ".claude/skills/$skill"
+done
+
+# Cleanup
+rm -rf "$SKILL_SRC"
+```
+
+## Available skills
 
 | Skill | Description | Tier |
 |-------|-------------|------|
 | `ideation` | Deep research + user story creation | Minimum |
-| `implement` | 10-step implementation workflow | Minimum |
+| `implement` | Implementation workflow with governance gates | Minimum |
 | `backlog` | Sprint planning + backlog overview | Minimum |
-| `architecture-review` | 8-dimension architecture review | Standard |
-| `sprint-review` | Quarterly audit + tech debt | Standard |
+| `architecture-review` | Architecture review (standard dimensions + active add-ons) | Standard |
+| `sprint-review` | Periodic audit + **learning-loop entry** (see `learning-loop.en.md`) | Standard |
 | `research` | Deep research via WebSearch + Perplexity | Standard |
-| `breakfix` | Incident response 7-step workflow | Standard |
-| `wrap-up` | Session close + auto-memory | Standard |
-| `integration-test` | Integration tests tier-1/tier-2 | Full |
-| `status` | System status dashboard on demand | Full |
-| `grafana` | Grafana dashboard development | Full |
-| `cloud-system-engineer` | VPS infrastructure (Hostinger) | Full |
-| `visualize` | Architecture diagrams in Miro | Full |
-| `skill-creator` | Create + package new skills | Full |
-| `excalidraw-diagram` | Visual diagrams as Excalidraw JSON | Optional |
-| `supabase` | Supabase DB management via MCP | Optional |
-| `vercel` | Vercel deployment management | Optional |
+| `security-architect` | Security review (STRIDE/OWASP) | Standard |
+| `skill-creator` | Create and package new skills | Standard |
+| `grafana` | Grafana dashboard development | Optional |
+| `cloud-system-engineer` | VPS infrastructure | Optional |
+| `visualize` | Architecture diagrams in Miro | Optional |
+| `design-md-generator` | Extract DESIGN.md from website/PDF | Optional |
 
-## Strategy: symlink vs. copy
+## Skill tier selection in bootstrap
 
-**Recommendation: symlink for generic skills**
-```bash
-# In the project directory
-mkdir -p .claude/skills
-
-# Minimum
-ln -s /root/.claude/skills/ideation .claude/skills/ideation
-ln -s /root/.claude/skills/implement .claude/skills/implement
-ln -s /root/.claude/skills/backlog .claude/skills/backlog
-
-# Standard (additional)
-ln -s /root/.claude/skills/architecture-review .claude/skills/architecture-review
-ln -s /root/.claude/skills/sprint-review .claude/skills/sprint-review
-ln -s /root/.claude/skills/research .claude/skills/research
-ln -s /root/.claude/skills/breakfix .claude/skills/breakfix
-ln -s /root/.claude/skills/wrap-up .claude/skills/wrap-up
-
-# Full (additional)
-ln -s /root/.claude/skills/integration-test .claude/skills/integration-test
-ln -s /root/.claude/skills/skill-creator .claude/skills/skill-creator
-ln -s /root/.claude/skills/cloud-system-engineer .claude/skills/cloud-system-engineer
-ln -s /root/.claude/skills/visualize .claude/skills/visualize
+```
+Which skills to install?
+  a) Minimum   (ideation, implement, backlog)
+  b) Standard  (+ architecture-review, sprint-review, research, security-architect, skill-creator)
+  c) Full      (all available)
+  d) Manual    (operator selects individually)
 ```
 
-**Copy when customization is needed** (e.g. project-specific templates):
+## Customization of installed skills
+
+**Generic (default):** Skills are copied unchanged from the master repo. References stay generic (no project assumptions) and work directly.
+
+**Project-specific (only when needed):** If the project requires domain-specific adjustments, the path is:
+
+1. Edit the file in the installed skill locally
+2. Document the adjustment as project-specific (e.g. in `specs/JAR-XXX.md` the first story on it)
+3. Optional: Package the adjustment as a skill variant via `/skill-creator`
+
+**Never** commit master skills from the project — the master stays generic.
+
+## Update strategy
+
+If a master skill gets an update:
+
 ```bash
-cp -r /root/.claude/skills/ideation .claude/skills/ideation
-# Then adapt:
-# - .claude/skills/ideation/references/story-template-feature.md
-# - .claude/skills/ideation/references/architecture-dimensions.md
+SKILL_SRC=$(mktemp -d)
+git clone --depth 1 https://github.com/vibercoder79/KI-Masterclass-Koerting- "$SKILL_SRC"
+
+# Show diff before overwrite
+diff -r "$SKILL_SRC/<skill>" ".claude/skills/<skill>"
+
+# Apply updates selectively — operator decides per file
 ```
 
-## Required customization after copy
+## Install order
 
-These reference files MUST be adapted to the project after copying:
+1. `research` — no dependencies
+2. `ideation` — needs story templates (included in skill)
+3. `backlog` — needs Linear/M365/GitHub connector
+4. `implement` — needs `change-checklist.md` + Git
+5. `architecture-review` — needs dimensions reference
+6. `security-architect` — standalone
+7. `sprint-review` — needs `learning-loop.en.md` if learning loop active
+8. Optional (full tier): `grafana`, `cloud-system-engineer`, `visualize`, `design-md-generator`
+9. `skill-creator` — standalone
 
-| File | What to adapt |
-|------|----------------|
-| `ideation/references/story-template-feature.md` | Domain-specific sections |
-| `ideation/references/architecture-dimensions.md` | Select/extend relevant dimensions |
-| `implement/references/change-checklist.md` | Special checklists (e.g. "new agent") |
-| `backlog/skill.md` | Linear team name + issue prefix |
+## ISSUE_WRITING_GUIDELINES.md
 
-## implement skill: mandatory steps (v2.0)
+NOT copied from an external path; rendered from `references/issue-writing-guidelines-template.md` (prefix substituted). See SKILL.md Phase 4.3.
 
-The current implement skill contains these new mandatory steps:
+## implement skill — governance integration
+
+The `implement` skill contains these mandatory steps (active when installed):
 
 | Step | What | Governance impact |
 |------|------|-------------------|
-| **1b** | Agent pattern declaration | Before code change, recorded in spec |
-| **3b** | Governance validation checklist | Check 8 dimensions + security |
-| **5** | Doc-impact execution | New file → 5-point checklist |
-| **6a** | ESLint check | 0 errors mandatory, warnings documented |
+| 3 | Context — read `ARCHITECTURE_DESIGN.md` Hub + component doc | Hub-first navigation |
+| 3b | Governance validation (8 dimensions + security) | Mandatory before plan |
+| 3c | Spec file gate (spec-gate.sh enforces it) | Spec required |
+| 5 | Implementation incl. T_last doc update | Component doc + Hub §9 + `lib/config.js` VERSION bump |
+| 6a | Linting gate (ESLint/Ruff — 0 errors required) | Quality gate |
 
-## wrap-up skill: when to use
+## Learning-loop integration (when active)
 
-**MANDATORY** at session end ("Exit", "bye", "end", "done"):
-- Create session summary
-- Write memory entries
-- Document open items
+When Block D = L1/L2/L3:
 
-## breakfix skill: incident process
+- `sprint-review` skill gains Step 7 (learning-loop entry) — see `learning-loop.en.md`
+- `ideation` skill gains Step 0.5 (read learnings context before story creation)
 
-7-step workflow: Detect → Diagnose → Fix → Verify → Document → Prevent → CLAUDE.md rule
-**After every /breakfix:** "Which CLAUDE.md rule would have prevented this incident?" → add rule.
-
-## .claude/ISSUE_WRITING_GUIDELINES.md
-
-This file is not part of any skill — create it directly:
-- Copy from `/docker/openclaw-aolv/data/.openclaw/workspace/trading/.claude/ISSUE_WRITING_GUIDELINES.md`
-- Adjust for project domain (issue prefix, terminology)
-
-## settings.json — hooks + permissions
-
-For the automation daemon and correct hook execution:
-```json
-// {PROJECT_PATH}/.claude/settings.json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash {PROJECT_PATH}/.claude/hooks/spec-gate.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash {PROJECT_PATH}/.claude/hooks/doc-version-sync.sh"
-          }
-        ]
-      }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(claude:*)"
-    ]
-  }
-}
-```
-
-## Order of skill installation (by dependency)
-
-1. `/research` — no dependencies
-2. `/ideation` — needs story templates + Linear
-3. `/backlog` — needs Linear
-4. `/implement` — needs change checklist + git
-5. `/breakfix` — needs git + Linear (recommended after implement)
-6. `/wrap-up` — standalone (recommended to install early)
-7. `/architecture-review` — needs dimensions definition
-8. `/integration-test` — needs project checks (must be adapted)
-9. `/cloud-system-engineer` — needs Hostinger MCP (if used)
-10. `/sprint-review` — needs all others
-11. `/visualize` — needs Miro token
-12. `/skill-creator` — standalone
+Activation: `.learning-loop` file in project root with content `L1`, `L2` or `L3`.

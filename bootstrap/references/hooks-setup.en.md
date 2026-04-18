@@ -193,7 +193,7 @@ done < <(grep -oP "path:\s*'\K[^']+" "$CONFIG_FILE" 2>/dev/null)
 if [ $MISMATCH -eq 1 ]; then
   echo ""
   echo "⛔ DOC-VERSION-SYNC: update documentation files to the new version!"
-  echo "   Bypass: git commit --no-verify (only for deliberate bypass)"
+  echo "   Bypass: git commit --no-verify (only for deliberate bypass, with justification in commit)"
   exit 1
 fi
 
@@ -205,8 +205,95 @@ exit 0
 
 ## Portability
 
-Both hooks have **no external dependencies** — only Bash, grep, git.
+Both hooks have **no external dependencies** — only Bash, grep, git, python3.
 
 Adapt for a new project:
-- `ISSUE_PREFIX` in spec-gate.sh → project prefix (e.g. `PROJ-`, `MYAPP-`)
+- Issue prefix is auto-extracted from the commit message in spec-gate.sh (pattern `[A-Z]+-\d+`) — no manual adjustment required
 - `versionPattern` → adapt to the doc format (standard: `**Version:** X.Y.Z`)
+
+## Harness override — settings.json may be auto-regenerated
+
+**Important:** The Claude Code harness can auto-regenerate `.claude/settings.json` when permissions are granted, and may strip hook sections. This is a known behavior.
+
+**Robust fallback:** Also register hooks in `.claude/settings.local.json` (gitignored, stays stable):
+
+```json
+// {PROJECT_PATH}/.claude/settings.local.json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash {PROJECT_PATH}/.claude/hooks/spec-gate.sh" },
+          { "type": "command", "command": "bash {PROJECT_PATH}/.claude/hooks/doc-version-sync.sh" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Settings load order: user → project → local. `settings.local.json` takes precedence and survives harness regeneration.
+
+The bootstrap skill creates **both** — `settings.json` as primary registration (team-wide, committed) and `settings.local.json` as fallback (local, gitignored).
+
+`.gitignore` is extended to include `.claude/settings.local.json`.
+
+## Optional: orphan-check.sh
+
+If Block C (doc architecture) activated hub auto-linking, the bootstrap skill installs a third hook `orphan-check.sh` that checks pre-commit whether every new `*.md` is registered in `ARCHITECTURE_DESIGN.md §9 References`.
+
+```bash
+#!/bin/bash
+# orphan-check.sh — blocks commit if new *.md is not registered in hub §9
+
+set -euo pipefail
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
+HUB="${PROJECT_ROOT}/ARCHITECTURE_DESIGN.md"
+
+INPUT=$(cat)
+CMD=$(echo "$INPUT" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    print(d.get('tool_input', {}).get('command', ''))
+except:
+    print('')
+" 2>/dev/null || echo "")
+
+if ! echo "$CMD" | grep -qE 'git commit'; then
+  exit 0
+fi
+
+if [ ! -f "$HUB" ]; then
+  exit 0
+fi
+
+NEW_MDS=$(git diff --cached --name-only --diff-filter=A | grep -E '\.md$' || true)
+
+if [ -z "$NEW_MDS" ]; then
+  exit 0
+fi
+
+ORPHANS=""
+while IFS= read -r md; do
+  base=$(basename "$md")
+  if ! grep -q "$base" "$HUB"; then
+    ORPHANS="${ORPHANS}\n  - $md"
+  fi
+done <<< "$NEW_MDS"
+
+if [ -n "$ORPHANS" ]; then
+  echo ""
+  echo "⛔ ORPHAN-CHECK: New MD files not in hub §9 references:"
+  echo -e "$ORPHANS"
+  echo ""
+  echo "  Rule: ARCHITECTURE_DESIGN.md is the hub — all new docs must be linked there."
+  echo "  Add them to §9 References, then re-commit."
+  exit 1
+fi
+
+exit 0
+```

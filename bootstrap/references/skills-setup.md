@@ -1,151 +1,119 @@
 # Skills Setup — Neue Projekt-Installation
 
-## Verfügbare Skills (Quellpfad)
+Skills werden aus dem offiziellen GitHub-Repo via `git clone` in einen Temp-Ordner geholt und in `{PROJECT_PATH}/.claude/skills/` kopiert. Kein Symlink auf VPS-Pfade, kein globales `/root/.claude/skills/`.
 
-Alle Skills liegen global unter `/root/.claude/skills/`. Für ein neues Projekt werden sie
-in das Projekt-Verzeichnis unter `.claude/skills/` verlinkt oder kopiert.
+## Installation (Standard-Flow)
 
-## Verfügbare Skills (Stand v2.0)
-
-| Skill | Beschreibung | Stufe |
-|-------|-------------|-------|
-| `ideation` | Deep Research + User Story Erstellung | Minimum |
-| `implement` | 10-Schritte-Implementierungs-Workflow | Minimum |
-| `backlog` | Sprint Planning + Backlog-Übersicht | Minimum |
-| `architecture-review` | 8-Dimensionen Architektur-Review | Standard |
-| `sprint-review` | Quartals-Audit + Tech Debt | Standard |
-| `research` | Deep Research via WebSearch + Perplexity | Standard |
-| `breakfix` | Incident Response 7-Schritte-Workflow | Standard |
-| `wrap-up` | Session-Abschluss + Auto-Memory | Standard |
-| `integration-test` | Integrationstests Tier-1/Tier-2 | Voll |
-| `status` | System-Status-Dashboard on demand | Voll |
-| `grafana` | Grafana Dashboard-Entwicklung | Voll |
-| `cloud-system-engineer` | VPS-Infrastruktur (Hostinger) | Voll |
-| `visualize` | Architektur-Diagramme in Miro | Voll |
-| `skill-creator` | Neue Skills erstellen + paketieren | Voll |
-| `excalidraw-diagram` | Visuelle Diagramme als Excalidraw-JSON | Optional |
-| `supabase` | Supabase DB Management via MCP | Optional |
-| `vercel` | Vercel Deployment Management | Optional |
-
-## Strategie: Symlink vs. Kopie
-
-**Empfehlung: Symlink für generische Skills**
 ```bash
-# Im Projekt-Verzeichnis
+# Temp-Ordner anlegen
+SKILL_SRC=$(mktemp -d)
+
+# Aktuelles Skills-Repo klonen (shallow)
+git clone --depth 1 https://github.com/vibercoder79/KI-Masterclass-Koerting- "$SKILL_SRC"
+
+# Skills-Verzeichnis im Projekt anlegen
+cd {PROJECT_PATH}
 mkdir -p .claude/skills
 
-# Minimum
-ln -s /root/.claude/skills/ideation .claude/skills/ideation
-ln -s /root/.claude/skills/implement .claude/skills/implement
-ln -s /root/.claude/skills/backlog .claude/skills/backlog
+# Gewaehlte Skills kopieren
+for skill in ideation implement backlog; do
+  cp -R "$SKILL_SRC/$skill" ".claude/skills/$skill"
+done
 
-# Standard (zusätzlich)
-ln -s /root/.claude/skills/architecture-review .claude/skills/architecture-review
-ln -s /root/.claude/skills/sprint-review .claude/skills/sprint-review
-ln -s /root/.claude/skills/research .claude/skills/research
-ln -s /root/.claude/skills/breakfix .claude/skills/breakfix
-ln -s /root/.claude/skills/wrap-up .claude/skills/wrap-up
-
-# Voll (zusätzlich)
-ln -s /root/.claude/skills/integration-test .claude/skills/integration-test
-ln -s /root/.claude/skills/skill-creator .claude/skills/skill-creator
-ln -s /root/.claude/skills/cloud-system-engineer .claude/skills/cloud-system-engineer
-ln -s /root/.claude/skills/visualize .claude/skills/visualize
+# Temp-Ordner aufraeumen
+rm -rf "$SKILL_SRC"
 ```
 
-**Kopie wenn Anpassung nötig** (z.B. projektspezifische Templates):
+## Verfuegbare Skills
+
+| Skill | Beschreibung | Tier |
+|-------|-------------|------|
+| `ideation` | Deep Research + User Story Erstellung | Minimum |
+| `implement` | Implementierungs-Workflow mit Governance-Gates | Minimum |
+| `backlog` | Sprint Planning + Backlog-Uebersicht | Minimum |
+| `architecture-review` | Architektur-Review (Standard-Dimensionen + aktivierte Add-ons) | Standard |
+| `sprint-review` | Periodisches Audit + **Learning-Loop-Eintrag** (siehe `learning-loop.md`) | Standard |
+| `research` | Deep Research via WebSearch + Perplexity | Standard |
+| `security-architect` | Security-Review (STRIDE/OWASP) | Standard |
+| `skill-creator` | Neue Skills erstellen + paketieren | Standard |
+| `grafana` | Grafana Dashboard-Entwicklung | Optional |
+| `cloud-system-engineer` | VPS-Infrastruktur | Optional |
+| `visualize` | Architektur-Diagramme in Miro | Optional |
+| `design-md-generator` | DESIGN.md aus Website/PDF extrahieren | Optional |
+
+## Skill-Tier-Auswahl im Bootstrap
+
+```
+Welche Skills installieren?
+  a) Minimum   (ideation, implement, backlog)
+  b) Standard  (+ architecture-review, sprint-review, research, security-architect, skill-creator)
+  c) Voll      (alle verfuegbaren)
+  d) Manuell   (Operator waehlt einzeln)
+```
+
+## Anpassung der installierten Skills
+
+**Generisch (Default):** Skills werden unveraendert aus dem Master-Repo kopiert. Die referenzen sind generisch gehalten (keine Projekt-Annahmen) und funktionieren direkt.
+
+**Projekt-spezifisch (nur bei Bedarf):** Wenn das Projekt domain-spezifische Anpassungen braucht (z.B. Component-Docs-Mapping fuer `implement/references/change-checklist.md`), ist der Weg:
+
+1. Die entsprechende Datei im installierten Skill lokal editieren
+2. Die Anpassung als projekt-spezifisch dokumentieren (z.B. in `specs/JAR-XXX.md` die erste Story dazu)
+3. Optional: Die Anpassung als Skill-Variante via `/skill-creator` paketieren
+
+**Niemals** Master-Skills direkt aus dem Projekt commiten — der Master-Stand bleibt generisch.
+
+## Update-Strategie
+
+Wenn der Master-Skill ein Update bekommt, kann der Operator im Projekt:
+
 ```bash
-cp -r /root/.claude/skills/ideation .claude/skills/ideation
-# Dann anpassen:
-# - .claude/skills/ideation/references/story-template-feature.md
-# - .claude/skills/ideation/references/architecture-dimensions.md
+# Neuen Stand holen
+SKILL_SRC=$(mktemp -d)
+git clone --depth 1 https://github.com/vibercoder79/KI-Masterclass-Koerting- "$SKILL_SRC"
+
+# Diff anzeigen vor Overwrite
+diff -r "$SKILL_SRC/<skill>" ".claude/skills/<skill>"
+
+# Gezielt Updates uebernehmen (nicht stumpf ueberschreiben)
+# Operator entscheidet pro File
 ```
 
-## Anpassungspflicht nach Kopie
+Alternativ: Projekt-spezifische Anpassungen erneut anwenden nach Copy.
 
-Diese Referenz-Dateien MÜSSEN nach dem Kopieren projektspezifisch angepasst werden:
+## Reihenfolge der Skill-Installation
 
-| Datei | Was anpassen |
-|-------|-------------|
-| `ideation/references/story-template-feature.md` | Domain-spezifische Sektionen |
-| `ideation/references/architecture-dimensions.md` | Relevante Dimensionen auswählen/ergänzen |
-| `implement/references/change-checklist.md` | Spezial-Checklisten (z.B. "Neuer Agent") |
-| `backlog/skill.md` | Linear Team-Name + Issue-Prefix |
+1. `research` — keine Abhaengigkeiten
+2. `ideation` — braucht story-templates (im Skill enthalten)
+3. `backlog` — braucht Linear/M365/GitHub-Connector
+4. `implement` — braucht `change-checklist.md` + Git
+5. `architecture-review` — braucht Dimensionen-Referenz
+6. `security-architect` — standalone
+7. `sprint-review` — braucht `learning-loop.md` falls Learning-Loop aktiv
+8. Optional (Voll-Tier): `grafana`, `cloud-system-engineer`, `visualize`, `design-md-generator`
+9. `skill-creator` — standalone
 
-## implement-Skill: Pflichtschritte (v2.0)
+## ISSUE_WRITING_GUIDELINES.md
 
-Der aktuelle implement-Skill enthält diese neuen Pflichtschritte:
+Wird NICHT aus einem externen Pfad kopiert, sondern aus `references/issue-writing-guidelines-template.md` gerendert (Prefix eingesetzt). Siehe SKILL.md Phase 4.3.
+
+## implement-Skill: Governance-Integration
+
+Der aktuelle `implement`-Skill enthaelt diese Pflichtschritte (werden automatisch aktiv wenn der Skill installiert ist):
 
 | Schritt | Was | Governance-Impact |
-|---------|-----|------------------|
-| **1b** | Agent-Pattern-Deklaration | Vor Code-Änderung, in Spec eintragen |
-| **3b** | Governance-Validation-Checklist | 8 Dimensionen + Security prüfen |
-| **5** | Doc-Impact-Ausführung | Neue Datei → 5-Punkt-Checkliste |
-| **6a** | ESLint-Check | 0 Errors Pflicht, Warnings dokumentieren |
+|---------|-----|-------------------|
+| 3 | Kontext — `ARCHITECTURE_DESIGN.md` Hub + Component-Doc lesen | Hub-first-Navigation |
+| 3b | Governance-Validation (8 Dimensionen + Security) | Pflicht vor Plan |
+| 3c | Spec-File Gate (spec-gate.sh erzwingt es) | Spec pflichtig |
+| 5 | Implementation inkl. T_last Doku-Update | Component-Doc + Hub §9 + `lib/config.js` VERSION bump |
+| 6a | Linting-Gate (ESLint/Ruff — 0 Errors Pflicht) | Qualitaets-Gate |
 
-## wrap-up-Skill: Wann verwenden
+## Learning-Loop-Integration (wenn aktiviert)
 
-**PFLICHT** bei Session-Ende ("Exit", "Tschüss", "Ende", "fertig"):
-- Session-Zusammenfassung erstellen
-- Memory-Einträge schreiben
-- Offene Punkte dokumentieren
+Wenn Block D = L1/L2/L3, wird:
 
-## breakfix-Skill: Incident-Prozess
+- `sprint-review`-Skill um Schritt 7 (Learning-Loop-Eintrag) erweitert — siehe `learning-loop.md`
+- `ideation`-Skill um Schritt 0.5 (Learnings-Kontext lesen vor Story-Erstellung) erweitert
 
-7-Schritte-Workflow: Detect → Diagnose → Fix → Verify → Document → Prevent → CLAUDE.md-Regel
-**Nach jedem /breakfix:** "Welche CLAUDE.md-Regel hätte diesen Incident verhindert?" → Regel ergänzen.
-
-## .claude/ISSUE_WRITING_GUIDELINES.md
-
-Diese Datei ist nicht Teil eines Skills, muss direkt erstellt werden:
-- Kopiere aus `/docker/openclaw-aolv/data/.openclaw/workspace/trading/.claude/ISSUE_WRITING_GUIDELINES.md`
-- Passe auf Projekt-Domain an (Issue-Prefix, Terminologie)
-
-## settings.json — Hooks + Permissions
-
-Für den Automation Daemon und korrekte Hook-Ausführung:
-```json
-// {PROJECT_PATH}/.claude/settings.json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash {PROJECT_PATH}/.claude/hooks/spec-gate.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash {PROJECT_PATH}/.claude/hooks/doc-version-sync.sh"
-          }
-        ]
-      }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(claude:*)"
-    ]
-  }
-}
-```
-
-## Reihenfolge der Skill-Installation (nach Abhängigkeit)
-
-1. `/research` — keine Abhängigkeiten
-2. `/ideation` — benötigt story-templates + Linear
-3. `/backlog` — benötigt Linear
-4. `/implement` — benötigt change-checklist + git
-5. `/breakfix` — benötigt git + Linear (empfohlen nach implement)
-6. `/wrap-up` — standalone (empfohlen früh installieren)
-7. `/architecture-review` — benötigt dimensions-definition
-8. `/integration-test` — benötigt Projekt-Checks (muss angepasst werden)
-9. `/cloud-system-engineer` — benötigt Hostinger MCP (falls genutzt)
-10. `/sprint-review` — benötigt alle anderen
-11. `/visualize` — benötigt Miro Token
-12. `/skill-creator` — standalone
+Aktivierung: `.learning-loop`-File im Projekt-Root mit Inhalt `L1`, `L2` oder `L3`.

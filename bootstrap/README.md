@@ -6,9 +6,9 @@
 
 # OpenCLAW Bootstrap Skill
 
-> A **portable Claude Code skill** that sets up a complete AI-driven development governance framework for any new project — in 5 guided phases, with zero external dependencies.
+> A **portable Claude Code skill** that sets up a complete AI-driven development governance framework for any new project — in 4 interview blocks (A-D) plus 7 setup phases, with zero external dependencies.
 
-**Origin:** [OpenCLAW Trading System](https://github.com/vibercoder79/openclaw_trading) — battle-tested in production since 2025.
+**Version 3.0 (April 2026)** — generic, interview-friendly, with portable learning loop (L1/L2/L3). No project-type lock-in, no trading-specific residue.
 **Foundation:** Claude Code Best Practice Checklist v10 (OWLIST GmbH, 2026) — context engineering, global settings, context protection, and agent patterns are integrated into the bootstrap process.
 
 ---
@@ -104,18 +104,20 @@ Zero external dependencies. All templates are embedded in `references/`.
 
 ---
 
-## Bootstrap Phases
+## Bootstrap Phases (v3.0)
+
+The bootstrap is structured as **4 interview blocks (A-D)** followed by **execution phases (4-7)**.
 
 | Phase | What happens | Input needed? |
 |-------|--------------|---------------|
-| **Pre-flight** | SSH, Node.js, Obsidian-sync mode check | Only on error |
-| **0a — Global settings** | `~/.claude/settings.json` + `~/.claude/CLAUDE.md` check/setup | Confirmation "Global Settings OK" |
-| **0 — Info-gathering** | Stack choice + 14 project questions | Yes, once |
-| **1 — Base structure** | Directories, Git, core files, `.claudeignore`, hooks, agent patterns | `.env` confirmation |
-| **2 — MCP + Skills** | MCP servers configured + skills installed/linked | MCP selection + skill tier |
-| **3 — Self-healing** | Self-Healing + Doc-Sync + cron/supercronic + log rotation | Cron type |
-| **4 — Daemon** (optional) | Linear Automation Daemon skeleton | Yes, if enabled |
-| **5 — Registry + smoke test** | Global CLAUDE.md + memory + Go/No-Go checklist | None |
+| **Phase 0** — Briefing | Skill announces the 4-block flow | Confirmation "ready" |
+| **Block A** — Project core | Stack + name + prefix + version + add-ons (Privacy, Cost, Signal, Compliance) | 7 questions |
+| **Block B** — Existing infrastructure | GitHub/Obsidian/Backlog/Env — integrates into existing state | 5 questions |
+| **Block C** — Doc architecture | 3-layer proposal (Story-Specs, Component-Docs, Architecture-Guidelines) + Hub-auto-linking | Confirmation / customization |
+| **Phase 4** — Base structure | Directories, Git, core files, `.claudeignore`, hooks, component skeletons | `.env` confirmation |
+| **Phase 5** — Skills via git-clone | Skills copied from `KI-Masterclass-Koerting-` repo (no VPS symlinks) | Skill tier |
+| **Block D** — Optional components | Self-Healing / DocSync / Automation-Daemon / Learning-Loop (L1/L2/L3) — all at the end | 4 yes/no + loop level |
+| **Phase 7** — Registry + finalization | Obsidian PMO hub + project index + final commit | None |
 
 ---
 
@@ -248,7 +250,7 @@ Obsidian, Telegram Bot Token, OpenRouter API Key, Hostinger API Key, Miro Access
 MIT — free to use, adapt for your project.
 
 Part of the **OpenCLAW Governance Framework**.
-Source: [github.com/vibercoder79/openclaw_trading](https://github.com/vibercoder79/openclaw_trading)
+Skills repo: [github.com/vibercoder79/KI-Masterclass-Koerting-](https://github.com/vibercoder79/KI-Masterclass-Koerting-)
 
 ---
 
@@ -258,9 +260,9 @@ Source: [github.com/vibercoder79/openclaw_trading](https://github.com/vibercoder
 
 # OpenCLAW Bootstrap Skill
 
-> Ein **portabler Claude Code Skill**, der ein vollständiges KI-gesteuertes Entwicklungs-Governance-Framework für jedes neue Projekt einrichtet — in 5 geführten Phasen, ohne externe Abhängigkeiten.
+> Ein **portabler Claude Code Skill**, der ein vollständiges KI-gesteuertes Entwicklungs-Governance-Framework für jedes neue Projekt einrichtet — in 4 Interview-Blöcken (A-D) plus 7 Setup-Phasen, ohne externe Abhängigkeiten.
 
-**Ursprung:** [OpenCLAW Trading System](https://github.com/vibercoder79/openclaw_trading) — seit 2025 im Produktivbetrieb erprobt.
+**Version 3.0 (April 2026)** — generisch, interview-freundlich, mit portablem Learning-Loop (L1/L2/L3). Kein Projekt-Typ-Lock-in, keine trading-spezifischen Altlasten mehr.
 **Grundlage:** Claude Code Best Practice Checkliste v10 (OWLIST GmbH, 2026) — Context Engineering, Global Settings, Kontextschutz und Agent-Patterns sind als integraler Bestandteil in den Bootstrap-Prozess eingeflossen.
 
 ---
@@ -569,18 +571,20 @@ bootstrap/
 
 ---
 
-## Die Bootstrap-Phasen
+## Die Bootstrap-Phasen (v3.0)
 
-| Phase | Was passiert | Eingabe nötig? |
+Der Bootstrap ist in **4 Interview-Bloecken (A-D)** plus **Execution-Phasen (4-7)** strukturiert.
+
+| Phase | Was passiert | Eingabe noetig? |
 |-------|-------------|----------------|
-| **Pre-Flight** | SSH, Node.js, Obsidian-Sync-Modus prüfen | Nur bei Fehler |
-| **0a — Global Settings** | `~/.claude/settings.json` + `~/.claude/CLAUDE.md` prüfen/einrichten | Bestätigung "Global Settings OK" |
-| **0 — Info-Gathering** | Stack-Wahl + 14 Projektfragen | Ja — einmalig beantworten |
-| **1 — Grundstruktur** | Verzeichnisse, Git, Kerndateien, `.claudeignore`, Hooks, Agent-Patterns | Bestätigung .env |
-| **2 — MCP + Skills** | MCP-Server konfigurieren + Skills installieren/verknüpfen | MCP-Auswahl + Skill-Tier |
-| **3 — Self-Healing** | Self-Healing + Doc-Sync + Cron/Supercronic + Log-Rotation | Cron-Typ wählen |
-| **4 — Daemon** (optional) | Linear Automation Daemon Skeleton | Ja, wenn aktiviert |
-| **5 — Registry + Smoke-Test** | Globale CLAUDE.md + Memory aktualisieren + Go/No-Go Checkliste | Keine |
+| **Phase 0** — Briefing | Skill kuendigt den 4-Block-Flow an | Bestaetigung "bereit" |
+| **Block A** — Projekt-Kern | Stack + Name + Prefix + Version + Add-ons (Privacy, Cost, Signal, Compliance) | 7 Fragen |
+| **Block B** — Bestehende Infrastruktur | GitHub/Obsidian/Backlog/Env — integriert in bestehenden Stand | 5 Fragen |
+| **Block C** — Doku-Architektur | 3-Schichten-Vorschlag (Story-Specs, Component-Docs, Architektur-Vorgaben) + Hub-Auto-Verlinkung | Bestaetigung / Anpassung |
+| **Phase 4** — Grundstruktur | Verzeichnisse, Git, Kerndateien, `.claudeignore`, Hooks, Component-Skelette | `.env`-Bestaetigung |
+| **Phase 5** — Skills via git-clone | Skills aus `KI-Masterclass-Koerting-` kopieren (keine VPS-Symlinks) | Skill-Tier |
+| **Block D** — Optional-Komponenten | Self-Healing / DocSync / Automation-Daemon / Learning-Loop (L1/L2/L3) — alle am Ende | 4 Ja/Nein + Loop-Level |
+| **Phase 7** — Registry + Finalisierung | Obsidian PMO-Hub + Projekt-Index + Final-Commit | Keine |
 
 ```mermaid
 flowchart LR

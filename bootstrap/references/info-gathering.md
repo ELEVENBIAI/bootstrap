@@ -1,90 +1,95 @@
-# Info-Gathering Checkliste — Neues Projekt
+# Info-Gathering — Block A (Projekt-Kern)
 
-Alle diese Informationen VOR dem Setup vom Operator einsammeln.
-Felder mit * sind Pflicht. Optionale Felder können später ergänzt werden.
+Der Bootstrap-Skill sammelt in Block A **nur die Projekt-Kern-Informationen** ein. Bestehende Infrastruktur wird in Block B erkundet, Doku-Architektur in Block C, Optional-Komponenten in Block D.
+
+**Wichtig:** Fragen **einzeln oder in kleinen Gruppen** stellen (max 3 pro Rueckfrage), nicht als Batch.
 
 ## Pflicht-Informationen
 
 | Variable | Frage an Operator | Beispiel |
-|----------|------------------|---------|
-| `PROJECT_NAME` * | Wie heißt das Projekt? | `MyAnalytics` |
-| `PROJECT_DESC` * | Ein Satz: Was macht das System? | "Ein Datenanalyse-Tool für Marketing-KPIs" |
-| `PROJECT_PATH` * | Absoluter Pfad zum Projekt-Verzeichnis | `/docker/myproject/data/workspace/` |
-| `GITHUB_REPO` * | GitHub Repository URL | `github.com/user/repo` |
-| `LINEAR_TEAM` * | Linear Team-Name (Slug) | `myteam` |
-| `ISSUE_PREFIX` * | Issue-Nummern-Prefix in Linear | `PROJ-` |
-| `VERSION_START` * | Start-Version | `1.0.0` |
-| `OBSIDIAN_VAULT` * | Absoluter Pfad zum Obsidian Vault | `/root/myvault/` |
+|----------|------------------|----------|
+| `STACK_CHOICE` * | Stack-Frage (a/b/c/d/e) — siehe SKILL.md Phase 1 A.1 | `d) Python` |
+| `PROJECT_NAME` * | Wie heisst das Projekt? | `MyAnalytics` |
+| `PROJECT_DESC` * | Ein Satz: Was macht das System? | `Datenanalyse-Tool fuer Marketing-KPIs` |
+| `VERSION_START` * | Start-Version | `0.1.0` |
+| `ISSUE_PREFIX` * | Prefix fuer Issues | default aus Projektname abgeleitet (z.B. `MA-`) |
+| `PRIMARY_LANG` * | Primaere Sprache fuer Doku | `de` oder `en` (default `de`) |
+| `ADDONS` * | Add-ons (Multi-Select) | siehe unten |
 
-## Optionale Informationen
+## Add-ons (Architektur-Dimensionen)
 
-| Variable | Frage an Operator | Default |
-|----------|------------------|---------|
-| `TELEGRAM_BOT_TOKEN` | Telegram Bot Token für Alerts? | — (skip) |
-| `PERPLEXITY_API_KEY` | Perplexity API Key für Deep Research? | — (OPENROUTER_API_KEY alternativ) |
-| `MIRO_BOARD_URL` | Miro Board URL für /visualize? | — (skip) |
-| `DAEMON_ENABLED` | Automation Daemon einrichten? (Ja/Nein) | Nein |
+Standard-Dimensionen (immer aktiv, nicht abwaehlbar):
+- Reliability
+- Data Integrity
+- Security
+- Performance
+- Observability
+- Maintainability
 
-## Architektur-Dimensionen
+Optionale Add-ons — Operator waehlt je nach Projekt:
 
-Welche der 8 Standard-Dimensionen sind relevant?
-Welche domain-spezifischen Dimensionen braucht das Projekt?
+| Add-on | Wann sinnvoll | Ergaenzt |
+|--------|---------------|----------|
+| **Privacy / DSGVO** | Voice-Assistants, personenbezogene Daten, Tier-Modelle | Dimension "Privacy" in `ARCHITECTURE_DESIGN.md`, Privacy-Sektion in `SECURITY.md`, Tier-Konzept-Platzhalter |
+| **Cost Efficiency** | LLM-lastige Projekte, SaaS-Subscriptions, Rate-Limits | Dimension "Cost Efficiency", Budget-Regeln in `GOVERNANCE.md` |
+| **Signal Quality** | ML / Analytics / Signal-Systeme | Dimension "Signal Quality", Evaluation-Metriken-Slot |
+| **Compliance** | Regulierte Branchen (Gesundheit, Finanz, Legal) | Compliance-Sektion in `GOVERNANCE.md` und `SECURITY.md`, Audit-Trail-Regeln |
 
-Standard (immer relevant):
-- Reliability, Data Integrity, Security, Performance, Observability, Maintainability
+## Block B — Bestehende Infrastruktur
 
-Optional je nach Domäne:
-- Cost Efficiency (bei API-lastigen Systemen)
-- Signal Quality (bei ML/Analytics-Systemen)
-- Custom Dimension (z.B. "Compliance" für regulierte Branchen)
+Siehe separates Dokument: `existing-infra-check.md`. Kurzfassung:
 
-## Skill-Auswahl
+| Variable | Frage | Optionen |
+|----------|-------|----------|
+| `PROJECT_PATH` * | Projekt-Verzeichnis | existiert + Pfad / neu anlegen |
+| `GITHUB_REPO` | GitHub-Repo | URL / spaeter / keines |
+| `OBSIDIAN_VAULT` | Obsidian-Vault fuer Doku | Pfad / nein |
+| `BACKLOG_TOOL` | Backlog-System | Linear + Slug / M365 / GitHub Issues / keines |
+| `HAS_ENV` | .env existiert? | ja / nein |
 
-Welche Skills sollen installiert werden?
+## Block C — Doku-Architektur
 
-**Minimum:**
-- [ ] /ideation
-- [ ] /implement
-- [ ] /backlog
+Siehe `doc-architecture-proposal.md`. Der Skill praesentiert einen 3-Schichten-Vorschlag:
+- Story-Specs (Repo)
+- Component-Docs (Obsidian oder `docs/components/`)
+- Architektur-Vorgaben (Obsidian oder `docs/`)
+- Hub: `ARCHITECTURE_DESIGN.md` im Repo mit §9-Referenzen-Auto-Verlinkung
 
-**Standard (empfohlen):**
-- [ ] /architecture-review
-- [ ] /sprint-review
-- [ ] /research
-- [ ] /breakfix
-- [ ] /wrap-up
+Operator bestaetigt oder passt an.
 
-**Voll:**
-- [ ] /integration-test (nur wenn Integrationstests gepflegt werden sollen)
-- [ ] /status (nur bei Daemon/Agent-Systemen)
-- [ ] /grafana (nur wenn Grafana genutzt wird)
-- [ ] /cloud-system-engineer (nur wenn Hostinger VPS genutzt wird)
-- [ ] /visualize (nur wenn Miro genutzt wird)
-- [ ] /skill-creator
+## Block D — Optional-Komponenten
 
-## Agent-Pattern Check
+Siehe `optional-components.md`. Kurzfassung:
 
-Wenn das Projekt autonome Agents beinhaltet:
-- Braucht jeder Agent eine Signal-File? → Ja: SIGNAL_TO_AGENT Map in self-healing.js pflegen
-- Brauchen Agents Start-Scripts? → Ja: `agents/xxx-start.sh` mit flock + PID anlegen
-- Braucht das Projekt Weight-Optimierung? → Nur bei ML/Signal-Systemen
+| Variable | Frage | Default |
+|----------|-------|---------|
+| `SELF_HEALING` | Cron-Agent einrichten? | nein |
+| `DOC_SYNC_OBSIDIAN` | DocSync zum Obsidian-Vault? | ja (wenn Vault) / nein (sonst) |
+| `AUTOMATION_DAEMON` | Linear-Webhook-Daemon? | nein |
+| `LEARNING_LOOP` | Learning-Loop-Level | L1 / L2 / L3 / nein (default L1) |
 
 ## Label-Taxonomie
 
-Projektspezifische Labels für Linear definieren.
-Minimum-Set (immer anlegen):
+Projektspezifische Labels fuer das Backlog-System. Minimum (immer):
 - `architecture`, `bug`, `feature`, `refactor`, `docs`, `infra`
 
-Domain-spezifisch ergänzen (Beispiele):
-- Trading: `agents`, `signals`, `risk`, `broker`
-- Analytics: `pipeline`, `dashboard`, `data-quality`
+Abhaengig von aktivierten Add-ons:
+- Privacy aktiv → `privacy`
+- Compliance aktiv → `compliance`
+
+Domain-Beispiele (Operator kann je nach Projekt erweitern):
 - Web-App: `frontend`, `backend`, `api`, `ux`
 - KI-System: `model`, `prompt`, `evaluation`, `data`
+- Voice-Assistant: `voice`, `brain`, `memory`, `tools`, `interfaces`
+- Research-Projekt: `research`, `analyse`, `hypothese`
+- Backend-Service: `service`, `infra`, `api`, `db`
 
-## Hooks-Konfiguration
+## Hook-Konfiguration
 
-Governance-Hooks werden automatisch in Phase 1 installiert.
-Keine weitere Konfiguration nötig ausser WORKSPACE-Pfad und ISSUE_PREFIX in den Hook-Scripts.
+Governance-Hooks werden automatisch in Phase 4 installiert. Siehe `hooks-setup.md`.
 
-Der SIGNAL_TO_AGENT-Check in spec-gate.sh ist CLAW-spezifisch (docker exec + SQLite).
-Für andere Projekte diesen Block weglassen — die restlichen 4 Checks reichen.
+Keine projekt-spezifische Anpassung noetig — nur `PROJECT_PATH` und `ISSUE_PREFIX` in den Hook-Scripts.
+
+## Keine Agent-/Signal-Pflicht
+
+Der Skill hat keine Annahmen ueber autonome Agent-Systeme oder Signal-Files. Wenn das Projekt autonome Agents braucht, wird das per Story im Projekt geklaert — nicht im Bootstrap.
